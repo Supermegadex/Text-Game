@@ -1,0 +1,331 @@
+<!doctype html>
+<html>
+ <head>
+  <title>Text Adventure</title>
+  <script>
+   var gameEvents = new Object();
+    gameEvents = {
+ stories: {
+ hub: "You are at camp",
+ explore1: "You walk around.",
+ explore2: "You find a forest.",
+ explore3: "You encounter a wolf.",
+ },
+ input: {
+ hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button type='button' class='btn btn-primary' onclick='hp(10, " + '"a"' + ")'>Heal <i class='fa fa-arrow-circle-o-right'></i></button>",
+ explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+ explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+ explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
+ fight:'<button onclick='+"'"+'fight("Wolf", 11, "wolfDefeat()", 5)'+"'"+' class="btn btn-danger">Attack!</button> | <button type="button" class="btn btn-warning" onclick="flee(7)">Try to Flee</button>',
+ }
+}
+  </script>
+  <script src="angular.min.js"></script>
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+  <link href="game.css" rel="stylesheet" />
+  <script src="jquery.min.js"></script>
+  <script src="bootstrap/js/bootstrap.js"></script>
+  <script src="game.js"></script>
+ </head>
+ <body ng-app onload="loadModal()">
+  <div id="story" class="well"></p>
+  </div>
+  <aside id="stats" class="well">
+  HP:<div class="progress progress-striped active" id="hp">
+  <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="hpBar">
+    100
+  </div>
+</div>
+  <div class="progress progress-striped active" id="xp">
+  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 0%;" id="xpBar">
+    XP: <span id="xpPoints">0</span>/<span id="xpTotal">20</span>
+  </div>
+  </div>
+  <ul class="pagination pagination-info">
+  <li><a href="#">Level</a></li>
+  <li class="disabled" id="lv1"><a href="#">1</a></li>
+  <li class="disabled" id="lv2"><a href="#">2</a></li>
+  <li class="disabled" id="lv3"><a href="#">3</a></li>
+  <li class="disabled" id="lv4"><a href="#">4</a></li>
+  <li class="disabled" id="lv5"><a href="#">5</a></li>
+</ul>
+  <br><br>
+  <ul class="list-group" id="stats">
+  <li class="list-group-item">
+    <span class="badge" id=str>10</span>
+    Strength
+  </li>
+  <li class="list-group-item">
+   <span class="badge" id=int>10</span>
+   Intelligence
+  </li>
+  <li class="list-group-item">
+   <span class="badge" id=wis>10</span>
+   Wisdom
+  </li>
+  <li class="list-group-item">
+   <span class="badge" id=con>10</span>
+   Constitution
+  </li>
+  <li class="list-group-item">
+   <span class="badge" id=dex>10</span>
+   Dexterity
+  </li>
+  <li class="list-group-item">
+   <span class="badge" id=cha>10</span>
+   Charisma
+  </li>
+  </ul>
+  </aside>
+  <aside id="detail" class="well">
+  <img id="detail-pic" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCACxARwDASIAAhEBAxEB/8QAGgABAQEBAQEBAAAAAAAAAAAAAgMBAAUGB//EACgQAQEBAQEAAQMCBQUAAAAAAAEAAhESAwUGMQSBEzIzQXM0UWFjsv/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APhu3dsutst7aWSCDSYRCYQaSLgkEGhILgkEHBILQkEGBILQtCDOW8kFoQHl3J8u5AOXcny7kE+XcnyxIJpYlRIpBNIpVSKQSSKVEikEki1EikEmLUSDBNs7NIMHdu7ZdB11lpBpMiTIESCwJkGhMLAmEGhILgkEGhILgkEHBILQkEGBby0JBAeXcny3kE+Xcqcs5BPliVEsSCaRSqkUgkkUqJFIJJFKqQSCSQSqkEgkxSokGCbBqMGAWWtkHWkZEDJkSZAiYRJ5gRMIlQg0JhYTINCYWBIINCQXBMIMCQWhIIDy3kgt5AOXcny7kE0ilXkUgkkUqpBIJpBKjFgkkGqwYJpTSqwYJMGowYJsGowYJsZsIMJkCZAyZAnmBlQhmeYGTIkyBZqEM1CBEwiTIEEwsCYQcEguCYQYFvLQlyAcs5U5YkE0ilVIpBJIJVSCQSSDVYMEmDU1Bgm02owYJ6g1NU9QT1BqNNgDCbBgwmUyZBQqZpk8wUzUzTJ5goTIE8wUzPMCpmB5mQKmYHmZDNQgQTCJMINCXLQkEA5YlTliQSSCVdEGCTBqahqCbTamoME9U9VNU9QBptTVNgDTajT1ANU2pqmwDUJ6gwEmUyZBQqFLLUIKFTNIqZYKFTNLNTMFM1M081MwUzUKQ1CCmamaWWplgqTzTzUywUzMKeWoMG8iy7BYBqmz0wYBqmz1T1AGDLUNQDVPU9U9QDUGeqeoBqDJhqAMNSYagDG1isAJlMZjBTLUKWWYwVzUKWWYwVy1M0hnlgtlnmllqZYKjUy0ctQYKjUy0RmMF8sxo5ZjBYZGqQ2+oK+orH1FYNWC3LDTBmmmslprBiwW3TDTAdNPUtMNMB1T0y009MBWCyWnpgKw0yWmsBYtqwWADMaQzGCuWoNEZjBYZ5aQzGC2WeWjlqDBbLMaOWoMFhmNEZjBYag0BmMFhmaoGpGoLmpeqBq31Bb1Y6p+rHUDdRdQdRdQJYLYsFg1aem5YLB2mGm5YaaDNNPTbpgtRi01tWCwZpgtqwWArHt2mHYDIYdtGCozGiMxgsMxojUGC2WY0RmMFstQaAzGguMxoDM1BcZDQGZqosakaomrTUFzV3ql6u9QW9Weqfqz1QUdRdQdRdVDdQWx1B1AlgtiwWg3TBbFgsHLDTcsFqMWC2rBYMWC2rTWDli3LHsB7cMbqCoyGkMhqLjMaAzGgsNQaAzGosMzVEZDQXNTNUDUjUFzUjVA1I1Bc1aaomrTUF/V3qj6t9QV9XeqXq71BT1Y6p+ouoKOouoOouoE6i6i6i6g11F1F1FajVhpsWCwasFsWKwcsFuWCwctnbFsoM7d2N0C7IafbRgsMxoDMYLDM1QGYwXNSNUBmMFjUzVAZGoLmrTVE1I1BY1b6omrTUFvV3ql6t9QU9XeqXq71BT1Z6p+rHUFHUXUHVjqBOououorAnUHViwWBOoOrFvU+P7d+p/L8WPkPj+LJvJrJr5cjx/4g8lYrezr7Y+qArj4OH/fmnv7Z+p5F1n4APz358xXjrFb2H7Z+p955/T9/wA+Y6+2PqeTrn9OH+/8fMR5Hbu3sP2v9UFHHwCPP6+Z5+0/q+jufi+FH+582YrwrrrojrrroESLroGSLroGSLroESLroESuug2266o6266g6666oyxuugyLddBjFuuoCwbroDr8N+r/AE//AEP6X/Dj/wAl10VY/m/e5/F10GP4/az+/wC110GH5tfzddB//9k=" class="img-responsive"/>
+  <div class="progress progress-striped active" id="enemyHP">
+  
+</div>
+  <div style="position: fixed; bottom: 0px; height: 50vh;">
+  <button class="btn btn-primary btn-lg" onclick="createModal()">
+  New Game
+</button>
+  <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#loadModal">
+  Load Game
+</button>
+  </div>
+  </aside>
+  <footer id="input" class="well">
+  </footer>
+  
+<!-- Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">In the Beginning...</h4>
+      </div>
+      <div class="modal-body">
+        <p id="newGameModal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quam nibh, suscipit non elementum sit amet, condimentum eget justo. Nam sed pulvinar dolor, quis tincidunt massa. Nam ac hendrerit risus. Nam pulvinar nisl mauris, id varius ante consequat ut. Donec congue, nunc sed consectetur aliquam, arcu nunc condimentum diam, vitae dignissim orci erat vel libero. Donec quis sagittis nisi, a aliquam dolor. Quisque et leo orci. <br>
+</p>
+   <h3>So, your name is <span id="name-entry">{{name}}</span>?<a onclick="create()" class="glyphicon glyphicon-ok" ></a></h3>
+      What do you focus your talents on?<br>
+      <div class="btn-group" data-toggle="buttons">
+  <label class="btn btn-info btn-sm">
+    <input type="radio" name="talent" id="str-focus"> Bodybuilding
+  </label>
+  <label class="btn btn-info btn-sm">
+    <input type="radio" name="talent" id="int-focus"> Acedemics
+  </label>
+  <label class="btn btn-info btn-sm">
+    <input type="radio" name="talent" id="wis-focus"> Prayer
+  </label>
+  <label class="btn btn-info btn-sm">
+    <input type="radio" name="talent" id="con-focus"> Endurance
+  </label>
+  <label class="btn btn-info btn-sm">
+    <input type="radio" name="talent" id="dex-focus"> Gymnastics
+  </label>
+  <label class="btn btn-info btn-sm">
+    <input type="radio" name="talent" id="cha-focus"> Making Friends
+  </label>
+</div>
+      </div>
+      <div class="modal-footer">
+        <input id="name-entry" type="text" ng-model="name" placeholder="Character Name" />
+        <button type="button" class="btn btn-primary glyphicon glyphicon-ok" onclick="create()" data-dismiss="modal"></button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <div class="modal fade" id="loadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Load Saved Game</h4>
+      </div>
+      <div class="modal-body">
+        <p><a href="#"><span class="badge">Load slot 1</span></a> <a href="#"><span class="badge">Load slot 2</span></a> <a href="#"><span class="badge">Load slot 3</span></a></p>
+      </div>
+      <div class="modal-footer"><p>
+        <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
+      </div>
+    </div>
+  </div>
+</div>
+  <div>
+  <input type="hidden" id="name" value="">
+  <input type="hidden" id="forestFound" value="false">
+  <input type="hidden" id="hitPoints">
+  </div>
+  <script>
+   function loadModal(){
+   $('#loadModal').modal();
+   }
+   function create(){
+   
+   if(document.getElementById('str-focus').checked){
+   document.getElementById('str').innerHTML = '15';
+   }
+   else if(document.getElementById('int-focus').checked){
+   document.getElementById('int').innerHTML = '15';
+   }
+   else if(document.getElementById('wis-focus').checked){
+   document.getElementById('wis').innerHTML = '15';
+   }
+   else if(document.getElementById('con-focus').checked){
+   document.getElementById('con').innerHTML = '15';
+   }
+   else if(document.getElementById('dex-focus').checked){
+   document.getElementById('dex').innerHTML = '15';
+   }
+   else if(document.getElementById('cha-focus').checked){
+   document.getElementById('cha').innerHTML = '15';
+   }
+   
+   document.getElementById('newGameModal').innerHTML = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quam nibh, suscipit non elementum sit amet, condimentum eget justo. Nam sed pulvinar dolor, quis tincidunt massa. Nam ac hendrerit risus. Nam pulvinar nisl mauris, id varius ante consequat ut. Donec congue, nunc sed consectetur aliquam, arcu nunc condimentum diam, vitae dignissim orci erat vel libero. Donec quis sagittis nisi, a aliquam dolor. Quisque et leo orci. <br>/";
+   
+   var name = document.getElementById('name-entry').innerHTML;
+   document.getElementById('story').innerHTML = name + ", are you ready?";
+   document.getElementById('name').innerHTML = name;
+   document.getElementById('input').innerHTML = "<button class='btn btn-info' type='button' onclick='explore()'>Yes! <i class='fa fa-arrow-circle-o-right'></i></button> <button type='button' onclick='createModal()' class='btn btn-warning'>No. <i class='fa fa-arrow-circle-o-left'></i></button>";
+   document.getElementById('forestFound').innerHTML = "false";
+   }
+   function createModal(){
+   $('#createModal').modal();
+   document.getElementById('str').innerHTML = '10';
+   document.getElementById('int').innerHTML = '10';
+   document.getElementById('wis').innerHTML = '10';
+   document.getElementById('con').innerHTML = '10';
+   document.getElementById('dex').innerHTML = '10';
+   document.getElementById('cha').innerHTML = '10';
+   document.getElementById('hpBar').innerHTML = 100;
+   document.getElementById('hpBar').style.width = 100 + "%";
+   }
+   
+   function explore(){
+    var adventure = Math.floor((Math.random()*10)+1);
+    if(adventure <= 5){
+     document.getElementById('story').innerHTML = gameEvents.stories.explore1;
+     document.getElementById('input').innerHTML = gameEvents.input.explore1;
+    }
+    var forestFound = document.getElementById('forestFound').value;
+    if(adventure > 5){
+     if(forestFound == "false"){
+      document.getElementById('story').innerHTML = gameEvents.stories.explore2;
+      document.getElementById('input').innerHTML = gameEvents.input.explore2;
+     }
+     else{
+      document.getElementById('story').innerHTML = gameEvents.stories.explore3;
+      document.getElementById('input').innerHTML = gameEvents.input.explore3;
+      document.getElementById('detail-pic').src = "http://www.wolfpserver.com/images/wolf-wolves-32863738-1280-1024.jpg";
+     }
+    }
+   }
+   
+   function main(){
+     if(document.getElementById('forestFound').value == "false"){
+      var forest = "<button type='button' class='btn btn-succeed>Forest</button>"
+     }
+     else{
+      forst = "";
+     }
+     document.getElementById('enemyHP').innerHTML = "";
+     document.getElementById('detail-pic').src = "data:image/jpeg;base64,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";
+     document.getElementById('story').innerHTML = gameEvents.stories.hub;
+     document.getElementById('input').innerHTML = gameEvents.input.hub + forest;
+   }
+   
+   function forestFind(){
+     main();
+     document.getElementById('forestFound').value = "true";
+   }
+   
+   function flee(speed){
+    if (document.getElementById('dex').innerHTML > speed){
+    main();
+    }
+    else{
+     hp(5, 's');
+     wolfFight(11, 5);
+    }
+   }
+   function hp(hpFact, as){
+     if(as == "a"){
+      var newHP = Number(document.getElementById('hpBar').innerHTML) + hpFact;
+      document.getElementById('hpBar').innerHTML = newHP;
+      document.getElementById('hpBar').style.width = newHP + "%";
+      if(newHP = 0){
+       document.getElementById('newGameModal').innerHTML = "You lost!";
+       main()
+      }
+     }
+     if(as == "s"){
+      var newHP = Number(document.getElementById('hpBar').innerHTML) - hpFact;
+      document.getElementById('hpBar').innerHTML = newHP;
+      document.getElementById('hpBar').style.width = newHP + "%";
+     }
+     if(document.getElementById('hpBar').innerHTML <= 0){
+      createModal();
+     }
+    }
+    function wolfFight(wolfHP, wolfStr){
+     var playerStr = document.getElementById('str');
+     if (playerStr >= wolfHP){
+      wolfDefeat();
+     }
+     else{
+      hp(10, "s")
+      document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
+    100\
+  </div>';
+     document.getElementById('input').innerHTML = gameEvents.input.fight;
+     }
+    }
+    function  wolfDefeat(){
+     main();
+     xp(10);
+    }
+    function fight(name, fightHP, victory, fightStr){
+     var currentEnemyHP = document.getElementById('enemyHPBar').innerHTML;
+     var playerStr = Math.round(document.getElementById('str').innerHTML / fightHP * 10);
+     var newEnemyHP = currentEnemyHP - playerStr;
+     document.getElementById('enemyHPBar').innerHTML = newEnemyHP;
+     document.getElementById('enemyHPBar').style.width = newEnemyHP + "%";
+     hp(fightStr, "s");
+     if(newEnemyHP <= 0){
+      wolfDefeat();
+     }
+    }
+    
+    function xp(points){
+     var currentXP = Number(document.getElementById('xpPoints').innerHTML);
+     var level = Number(document.getElementById('xpTotal').innerHTML);
+     var newXP = currentXP + points;
+     var percent = newXP / level * 100;
+     
+     if(percent >= 100){
+      if(document.getElementById('lv1').className == "disabled"){
+       document.getElementById('lv1').className = "active";
+      }
+      else if(document.getElementById('lv2').className == "disabled"){
+       document.getElementById('lv2').className = "active";
+      }
+      else if(document.getElementById('lv3').className == "disabled"){
+       document.getElementById('lv3').className = "active";
+      }
+      else if(document.getElementById('lv4').className == "disabled"){
+       document.getElementById('lv4').className = "active";
+      }
+      else if(document.getElementById('lv5').className == "disabled"){
+       document.getElementById('lv5').className = "active";
+      }
+      percent = 0;
+      newXP = 0;
+      var newXPTotal = document.getElementById('con').innerHTML / 5;
+      document.getElementById('xpTotal').innerHTML = level + newXPTotal;
+     }
+     document.getElementById('xpPoints').innerHTML = newXP;
+     document.getElementById('xpBar').style.width = percent + "%";
+    }
+  </script>
+ </body>
+</html>
