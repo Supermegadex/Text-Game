@@ -386,6 +386,32 @@
       localStorage.cha1 = document.getElementById('cha').innerHTML;
       localStorage.level1 = document.getElementById('level').value;
      }
+if(to == "3"){
+      localStorage.name3 = document.getElementById('name').value;
+      localStorage.forestFound3 = document.getElementById('forestFound').value;
+      localStorage.hp3 = document.getElementById('hpBar').innerHTML;
+      localStorage.hpPercent3 = document.getElementById('hpBar').style.width;
+      localStorage.str3 = document.getElementById('str').innerHTML;
+      localStorage.int3 = document.getElementById('int').innerHTML;
+      localStorage.wis3 = document.getElementById('wis').innerHTML;
+      localStorage.con3 = document.getElementById('con').innerHTML;
+      localStorage.dex3 = document.getElementById('dex').innerHTML;
+      localStorage.cha3 = document.getElementById('cha').innerHTML;
+      localStorage.level3 = document.getElementById('level').value;
+     }
+    if(to == "2"){
+      localStorage.name2 = document.getElementById('name').value;
+      localStorage.forestFound2 = document.getElementById('forestFound').value;
+      localStorage.hp2 = document.getElementById('hpBar').innerHTML;
+      localStorage.hpPercent2 = document.getElementById('hpBar').style.width;
+      localStorage.str2 = document.getElementById('str').innerHTML;
+      localStorage.int2 = document.getElementById('int').innerHTML;
+      localStorage.wis2= document.getElementById('wis').innerHTML;
+      localStorage.con2 = document.getElementById('con').innerHTML;
+      localStorage.dex2 = document.getElementById('dex').innerHTML;
+      localStorage.cha2 = document.getElementById('cha').innerHTML;
+      localStorage.level2 = document.getElementById('level').value;
+     }
      main();
     }
     function load(from){
@@ -401,6 +427,30 @@
      document.getElementById('int').innerHTML = localStorage.int1;
      document.getElementById('str').innerHTML = localStorage.str1;
      document.getElementById('level').value = localStorage.level1;
+     }if(from = 2){
+     document.getElementById('hpBar').innerHTML = localStorage.hp2;
+     document.getElementById('forestFound').value = localStorage.forestFound2;
+     document.getElementById('name').value = localStorage.name2;
+     document.getElementById('hpBar').style.width = localStorage.hpPercent2;
+     document.getElementById('cha').innerHTML = localStorage.cha2;
+     document.getElementById('dex').innerHTML = localStorage.dex2;
+     document.getElementById('con').innerHTML = localStorage.con2;
+     document.getElementById('wis').innerHTML = localStorage.wis2;
+     document.getElementById('int').innerHTML = localStorage.int2;
+     document.getElementById('str').innerHTML = localStorage.str2;
+     document.getElementById('level').value = localStorage.level2;
+     }if(from = 3){
+     document.getElementById('hpBar').innerHTML = localStorage.hp3;
+     document.getElementById('forestFound').value = localStorage.forestFound3;
+     document.getElementById('name').value = localStorage.name3;
+     document.getElementById('hpBar').style.width = localStorage.hpPercent3;
+     document.getElementById('cha').innerHTML = localStorage.cha3;
+     document.getElementById('dex').innerHTML = localStorage.dex3;
+     document.getElementById('con').innerHTML = localStorage.con3;
+     document.getElementById('wis').innerHTML = localStorage.wis3;
+     document.getElementById('int').innerHTML = localStorage.int3;
+     document.getElementById('str').innerHTML = localStorage.str3;
+     document.getElementById('level').value = localStorage.level3;
      }
      main();
     }
