@@ -6,17 +6,17 @@
    var gameEvents = new Object();
     gameEvents = {
  stories: {
- hub: ", you are at camp",
- explore1: "You walk around.",
- explore2: "You find a forest.",
- explore3: "You encounter a wolf.",
+  hub: ", you are at camp",
+  explore1: "You walk around.",
+  explore2: "You find a forest.",
+  explore3: "You encounter a wolf.",
  },
  input: {
- hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button type='button' class='btn btn-primary' onclick='hp(10, " + '"a"' + ")'>Heal <i class='fa fa-arrow-circle-o-right'></i></button>",
- explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
- explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
- explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
- fight:'<button onclick='+"'"+'fight("Wolf", 11, "wolfDefeat()", 5)'+"'"+' class="btn btn-danger">Attack!</button> | <button type="button" class="btn btn-warning" onclick="flee(7)">Try to Flee</button>',
+  hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button type='button' class='btn btn-primary' onclick='hp(10, " + '"a"' + ")'>Heal <i class='fa fa-arrow-circle-o-right'></i></button> <button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button>",
+  explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+  explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+  explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
+  fight:'<button onclick='+"'"+'fight("Wolf", 11, "wolfDefeat()", 5)'+"'"+' class="btn btn-danger">Attack!</button> | <button type="button" class="btn btn-warning" onclick="flee(7)">Try to Flee</button>',
  }
 }
   </script>
@@ -90,7 +90,7 @@
   <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#loadModal">
   Load Game
 </button>
-  <button id="save" onclick="save('choose')">Save</button>
+  <button id="save" onclick="save('choose')" class="btn btn-primary btn-lg">Save</button>
   </div>
   </aside>
   <footer id="input" class="well">
@@ -144,7 +144,7 @@
         <h4 class="modal-title" id="myModalLabel">Load Saved Game</h4>
       </div>
       <div class="modal-body">
-        <p><a href="#" onclick="load('1')"><span class="badge">Load slot 1</span></a> <a href="#" onclick="load('2')"><span class="badge">Load slot 2</span></a> <a href="#" onclick="load('3')"><span class="badge">Load slot 3</span></a></p>
+        <p><a href="#" onclick="load('1')" data-dismiss="modal"><span class="badge">Load slot 1</span></a> <a href="#" onclick="load('2')" data-dismiss="modal"><span class="badge">Load slot 2</span></a> <a href="#" onclick="load('3')" data-dismiss="modal"><span class="badge">Load slot 3</span></a></p>
       </div>
       <div class="modal-footer"><p>
         <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
@@ -161,7 +161,7 @@
         <h4 class="modal-title" id="myModalLabel">Save Game</h4>
       </div>
       <div class="modal-body">
-        <p><a onclick="save('1')" href="#"><span class="badge">Save to slot 1</span></a> <a href="#" onclick="save('2')"><span class="badge">Save to slot 2</span></a><a href="#" onclick="save('3')"><span class="badge">Save to slot 3</span></a></p>
+        <p><a onclick="save('1')" href="#" data-dismiss="modal"><span class="badge">Save to slot 1</span></a> <a href="#" onclick="save('2')" data-dismiss="modal"><span class="badge">Save to slot 2</span></a><a href="#" onclick="save('3')" data-dismiss="modal"><span class="badge">Save to slot 3</span></a></p>
       </div>
       <div class="modal-footer"><p>
         <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
@@ -174,6 +174,14 @@
   <input type="hidden" id="forestFound" value="false">
   <input type="hidden" id="hitPoints">
   <input type="hidden" id="level" value="">
+  
+  <input type="hidden" id="inventory1" value="" name>
+  <input type="hidden" id="inventory2" value="" name>
+  <input type="hidden" id="inventory3" value="" name>
+  <input type="hidden" id="inventory4" value="" name>
+  <input type="hidden" id="inventory5" value="" name>
+  <input type="hidden" id="inventory6" value="" name>
+  
   </div>
   <script>
    function loadModal(){
@@ -222,12 +230,17 @@
    
    function explore(){
     var adventure = Math.floor((Math.random()*10)+1);
-    if(adventure < 5){
+    if(adventure < 3){
      document.getElementById('story').innerHTML = gameEvents.stories.explore1;
      document.getElementById('input').innerHTML = gameEvents.input.explore1;
     }
+    if(adventure > 3 && adventure < 7){
+     document.getElementById('story').innerHTML = "You find Health Potion";
+     document.getElementById('input').innerHTML = gameEvents.input.explore1;
+     itemGet("Health Potion", 1);
+    }
     var forestFound = document.getElementById('forestFound').value;
-    if(adventure >= 5){
+    if(adventure >= 7){
      if(forestFound == "false"){
       document.getElementById('story').innerHTML = gameEvents.stories.explore2;
       document.getElementById('input').innerHTML = gameEvents.input.explore2;
@@ -385,6 +398,12 @@
       localStorage.dex1 = document.getElementById('dex').innerHTML;
       localStorage.cha1 = document.getElementById('cha').innerHTML;
       localStorage.level1 = document.getElementById('level').value;
+      localstorage.inventorySlot1 = document.getElementById('inventory1').value;
+      localstorage.inventorySlot2 = document.getElementById('inventory2').value;
+      localstorage.inventorySlot3 = document.getElementById('inventory3').value;
+      localstorage.inventorySlot4 = document.getElementById('inventory4').value;
+      localstorage.inventorySlot5 = document.getElementById('inventory5').value;
+      localstorage.inventorySlot6 = document.getElementById('inventory6').value;
      }
 if(to == "3"){
       localStorage.name3 = document.getElementById('name').value;
@@ -398,6 +417,12 @@ if(to == "3"){
       localStorage.dex3 = document.getElementById('dex').innerHTML;
       localStorage.cha3 = document.getElementById('cha').innerHTML;
       localStorage.level3 = document.getElementById('level').value;
+      localstorage.inventorySlot1 = document.getElementById('inventory1').value;
+      localstorage.inventorySlot2 = document.getElementById('inventory2').value;
+      localstorage.inventorySlot3 = document.getElementById('inventory3').value;
+      localstorage.inventorySlot4 = document.getElementById('inventory4').value;
+      localstorage.inventorySlot5 = document.getElementById('inventory5').value;
+      localstorage.inventorySlot6 = document.getElementById('inventory6').value;
      }
     if(to == "2"){
       localStorage.name2 = document.getElementById('name').value;
@@ -411,11 +436,18 @@ if(to == "3"){
       localStorage.dex2 = document.getElementById('dex').innerHTML;
       localStorage.cha2 = document.getElementById('cha').innerHTML;
       localStorage.level2 = document.getElementById('level').value;
+      localstorage.inventorySlot1 = document.getElementById('inventory1').value;
+      localstorage.inventorySlot2 = document.getElementById('inventory2').value;
+      localstorage.inventorySlot3 = document.getElementById('inventory3').value;
+      localstorage.inventorySlot4 = document.getElementById('inventory4').value;
+      localstorage.inventorySlot5 = document.getElementById('inventory5').value;
+      localstorage.inventorySlot6 = document.getElementById('inventory6').value;
      }
      main();
     }
     function load(from){
-     if(from = 1){
+     main();
+     if(from == "1"){
      document.getElementById('hpBar').innerHTML = localStorage.hp1;
      document.getElementById('forestFound').value = localStorage.forestFound1;
      document.getElementById('name').value = localStorage.name1;
@@ -427,7 +459,14 @@ if(to == "3"){
      document.getElementById('int').innerHTML = localStorage.int1;
      document.getElementById('str').innerHTML = localStorage.str1;
      document.getElementById('level').value = localStorage.level1;
-     }if(from = 2){
+     document.getElementById('inventory1').value = localstorage.inventorySlot1;
+     document.getElementById('inventory2').value = localstorage.inventorySlot2;
+     document.getElementById('inventory3').value = localstorage.inventorySlot3;
+     document.getElementById('inventory4').value = localstorage.inventorySlot4;
+     document.getElementById('inventory5').value = localstorage.inventorySlot5;
+     document.getElementById('inventory6').value = localstorage.inventorySlot6;
+     }
+     if(from == "2"){
      document.getElementById('hpBar').innerHTML = localStorage.hp2;
      document.getElementById('forestFound').value = localStorage.forestFound2;
      document.getElementById('name').value = localStorage.name2;
@@ -439,7 +478,8 @@ if(to == "3"){
      document.getElementById('int').innerHTML = localStorage.int2;
      document.getElementById('str').innerHTML = localStorage.str2;
      document.getElementById('level').value = localStorage.level2;
-     }if(from = 3){
+     }
+     if(from == "3"){
      document.getElementById('hpBar').innerHTML = localStorage.hp3;
      document.getElementById('forestFound').value = localStorage.forestFound3;
      document.getElementById('name').value = localStorage.name3;
@@ -452,11 +492,65 @@ if(to == "3"){
      document.getElementById('str').innerHTML = localStorage.str3;
      document.getElementById('level').value = localStorage.level3;
      }
-     main();
     }
 function levelUp(level){
  document.getElementById('level').value = level;
 }
+  
+  function inventory(){
+   if(document.getElementById('inventory1').value == ""){
+    var inventory1 = "";
+   }
+   else{
+    var inventory1 = document.getElementById('inventory1').value+ " " + document.getElementById('inventory1').name;
+   }
+   if(document.getElementById('inventory2').value == ""){
+    var inventory2 = "";
+   }
+   else{
+    var inventory2 = document.getElementById('inventory2').value+ " " + document.getElementById('inventory2').name;
+   }
+   if(document.getElementById('inventory3').value == ""){
+    var inventory3 = "";
+   }
+   else{
+    var inventory3 = document.getElementById('inventory3').value+ " " + document.getElementById('inventory3').name;
+   }
+   if(document.getElementById('inventory4').value == ""){
+    var inventory4 = "";
+   }
+   else{
+    var inventory4 = document.getElementById('inventory4').value+ " " + document.getElementById('inventory4').name;
+   }
+   if(document.getElementById('inventory5').value == ""){
+    var inventory5 = "";
+   }
+   else{
+    var inventory5 = document.getElementById('inventory5').value+ " " + document.getElementById('inventory5').name;
+   }
+   
+   document.getElementById('story').innerHTML = inventory1 + inventory2 + inventory3 + inventory4 + inventory5;
+  }
+  
+  function itemGet(item, quantity){
+   var inventory1i = document.getElementById('inventory1').value;
+   var inventory1q = document.getElementById('inventory1').name;
+   var inventory2i = document.getElementById('inventory2').value;
+   var inventory2q = document.getElementById('inventory2').name;
+   var inventory3i = document.getElementById('inventory3').value;
+   var inventory3q = document.getElementById('inventory3').name;
+   var inventory4i = document.getElementById('inventory4').value;
+   var inventory4q = document.getElementById('inventory4').name;
+   if(inventory1i == ""  || inventory1i == item){
+    doument.getElementsById('inventory1').value = item;
+    if(inventory1 == item){
+     document.getElementById('inventory1').name = document.getElementById('inventory').name + quantity;
+    }
+    else{
+     document.getElementById('inventory1').name = item;
+    }
+   }
+  }
   </script>
  </body>
 </html>
