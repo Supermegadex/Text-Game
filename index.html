@@ -1,22 +1,22 @@
 <!doctype html>
 <html>
  <head>
-  <title>Text Adventure Stable</title>
+  <title>Text Adventure</title>
   <script>
    var gameEvents = new Object();
     gameEvents = {
  stories: {
- hub: "You are at camp",
- explore1: "You walk around.",
- explore2: "You find a forest.",
- explore3: "You encounter a wolf.",
+  hub: ", you are at camp",
+  explore1: "You walk around.",
+  explore2: "You find a forest.",
+  explore3: "You encounter a wolf.",
  },
  input: {
- hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button type='button' class='btn btn-primary' onclick='hp(10, " + '"a"' + ")'>Heal <i class='fa fa-arrow-circle-o-right'></i></button>",
- explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
- explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
- explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
- fight:'<button onclick='+"'"+'fight("Wolf", 11, "wolfDefeat()", 5)'+"'"+' class="btn btn-danger">Attack!</button> | <button type="button" class="btn btn-warning" onclick="flee(7)">Try to Flee</button>',
+  hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button type='button' class='btn btn-primary' onclick='hp(10, " + '"a"' + ")'>Heal <i class='fa fa-arrow-circle-o-right'></i></button> <button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button>",
+  explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+  explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+  explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
+  fight:'<button onclick='+"'"+'fight("Wolf", 11, "wolfDefeat()", 5)'+"'"+' class="btn btn-danger">Attack!</button> | <button type="button" class="btn btn-warning" onclick="flee(7)">Try to Flee</button>',
  }
 }
   </script>
@@ -33,13 +33,13 @@
   </div>
   <aside id="stats" class="well">
   HP:<div class="progress progress-striped active" id="hp">
-  <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="hpBar">
-    100
+  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;" id="hpBar">
+    0
   </div>
 </div>
   <div class="progress progress-striped active" id="xp">
-  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 0%;" id="xpBar">
-    XP: <span id="xpPoints">0</span>/<span id="xpTotal">20</span>
+  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="" id="xpBar">
+    XP: <span id="xpPoints"></span>/<span id="xpTotal">20</span>
   </div>
   </div>
   <ul class="pagination pagination-info">
@@ -90,6 +90,7 @@
   <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#loadModal">
   Load Game
 </button>
+  <button id="save" onclick="save('choose')" class="btn btn-primary btn-lg">Save</button>
   </div>
   </aside>
   <footer id="input" class="well">
@@ -143,7 +144,7 @@
         <h4 class="modal-title" id="myModalLabel">Load Saved Game</h4>
       </div>
       <div class="modal-body">
-        <p><a href="#"><span class="badge">Load slot 1</span></a> <a href="#"><span class="badge">Load slot 2</span></a> <a href="#"><span class="badge">Load slot 3</span></a></p>
+        <p><a href="#" onclick="load('1')" data-dismiss="modal"><span class="badge">Load slot 1</span></a> <a href="#" onclick="load('2')" data-dismiss="modal"><span class="badge">Load slot 2</span></a> <a href="#" onclick="load('3')" data-dismiss="modal"><span class="badge">Load slot 3</span></a></p>
       </div>
       <div class="modal-footer"><p>
         <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
@@ -151,7 +152,23 @@
     </div>
   </div>
 </div>
-  <div>
+  
+  <!-- Save -->
+  <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Save Game</h4>
+      </div>
+      <div class="modal-body">
+        <p><a onclick="save('1')" href="#" data-dismiss="modal"><span class="badge">Save to slot 1</span></a> <a href="#" onclick="save('2')" data-dismiss="modal"><span class="badge">Save to slot 2</span></a><a href="#" onclick="save('3')" data-dismiss="modal"><span class="badge">Save to slot 3</span></a></p>
+      </div>
+      <div class="modal-footer"><p>
+        <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
+      </div>
+    </div>
+  </div>
+</div>
   <input type="hidden" id="name" value="">
   <input type="hidden" id="forestFound" value="false">
   <input type="hidden" id="hitPoints">
