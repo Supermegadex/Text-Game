@@ -12,13 +12,16 @@
   explore3: "You encounter a wolf.",
  },
  input: {
-  hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button type='button' class='btn btn-primary' onclick='hp(10, " + '"a"' + ")'>Heal <i class='fa fa-arrow-circle-o-right'></i></button> <button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button>",
+  hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button>",
   explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
   explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
   explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
   fight:'<button onclick='+"'"+'fight("Wolf", 11, "wolfDefeat()", 5)'+"'"+' class="btn btn-danger">Attack!</button> | <button type="button" class="btn btn-warning" onclick="flee(7)">Try to Flee</button>',
- }
-}
+ },
+ items: {
+ 
+ },
+};
   </script>
   <script src="angular.min.js"></script>
   <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
@@ -556,43 +559,43 @@ function levelUp(level){
   
   function inventory(){
    if(document.getElementById('inventory1').value == "n"){
-    var inventory1 = "";
+    var inventory1 = "<button class='btn btn-info'>None</button>";
    }
    else{
-    var inventory1 = "<button onclick='useItem(1)' class='btn btn-info'>" + document.getElementById('inventory1').value+ " <span class='badge'>" + document.getElementById('inventory1').name + "</span></button>";
+    var inventory1 = "<button onclick='useItem(\"1\")' class='btn btn-info'>" + document.getElementById('inventory1').value+ " <span class='badge'>" + document.getElementById('inventory1').name + "</span></button>";
    }
    if(document.getElementById('inventory2').value == "n"){
-    var inventory2 = "";
+    var inventory2 = "<button class='btn btn-primary'>None</button>";
    }
    else{
-    var inventory2 = "<button onclick='useItem(2)' class='btn btn-info'>" + document.getElementById('inventory2').value+ " <span class='badge'>" + document.getElementById('inventory2').name + "</span></button>";
+    var inventory2 = "<button onclick='useItem(\"2\")' class='btn btn-primary'>" + document.getElementById('inventory2').value+ " <span class='badge'>" + document.getElementById('inventory2').name + "</span></button>";
    }
    if(document.getElementById('inventory3').value == "n"){
-    var inventory3 = "";
+    var inventory3 = "<button class='btn btn-primary'>None</button>";
    }
    else{
-    var inventory3 = "<button onclick='useItem(3)' class='btn btn-info'>" + document.getElementById('inventory3').value+ " <span class='badge'>" + document.getElementById('inventory3').name + "</span></button>";
+    var inventory3 = "<button onclick='useItem(\"3\")' class='btn btn-info'>" + document.getElementById('inventory3').value+ " <span class='badge'>" + document.getElementById('inventory3').name + "</span></button>";
    }
    if(document.getElementById('inventory4').value == "n"){
-    var inventory4 = "";
+    var inventory4 = "<button class='btn btn-info'>None</button>";
    }
    else{
-    var inventory4 = "<button onclick='useItem(4)' class='btn btn-info'>" + document.getElementById('inventory4').value+ " <span class='badge'>" + document.getElementById('inventory4').name + "</span></button>";
+    var inventory4 = "<button onclick='useItem(\"4\")' class='btn btn-primary'>" + document.getElementById('inventory4').value+ " <span class='badge'>" + document.getElementById('inventory4').name + "</span></button>";
    }
    if(document.getElementById('inventory5').value == "n"){
-    var inventory5 = "";
+    var inventory5 = "<button class='btn btn-info'>None</button>";
    }
    else{
-    var inventory5 = "<button onclick='useItem(5)' class='btn btn-info'>" + document.getElementById('inventory5').value+ " <span class='badge'>" + document.getElementById('inventory5').name + "</span></button>";
+    var inventory5 = "<button onclick='useItem(\"5\")' class='btn btn-info'>" + document.getElementById('inventory5').value+ " <span class='badge'>" + document.getElementById('inventory5').name + "</span></button>";
    }
    
    if(document.getElementById('inventory6').value == "n"){
-    var inventory6 = "";
+    var inventory6 = "<button class='btn btn-primary'>None</button>";
    }
    else{
-    var inventory6 = "<button onclick='useItem(6)' class='btn btn-info'>" + document.getElementById('inventory6').value+ " <span class='badge'>" + document.getElementById('inventory6').name + "</span></button>";
+    var inventory6 = "<button onclick='useItem(\"6\")' class='btn btn-primary'>" + document.getElementById('inventory6').value+ " <span class='badge'>" + document.getElementById('inventory6').name + "</span></button>";
    }
-   document.getElementById('story').innerHTML = inventory1 + inventory2 + inventory3 + inventory4 + inventory5 + inventory6;
+   document.getElementById('story').innerHTML = inventory1 + " " + inventory2 + " " + inventory3 + " " + inventory4 + " " + inventory5 + " " + inventory6;
   }
   
   function itemGet(item, quantity){
@@ -630,7 +633,8 @@ function levelUp(level){
     else{
      document.getElementById('inventory3').name = quantity;
     }
-   }if(inventory1i == "n" || inventory1i == item){
+   }
+    else if(inventory4i == "n" || inventory4i == item){
     document.getElementById('inventory4').value = item;
     if(inventory1i == item){
      document.getElementById('inventory4').name = Number(document.getElementById('inventory4').name) + Number(quantity);
@@ -640,6 +644,22 @@ function levelUp(level){
     }
    }
   }
+  function useItem(slot){
+    var iSlot = "inventory" + slot;
+    var newQuantity = Number(document.getElementById(iSlot).name) - 1;
+    document.getElementById(iSlot).name = newQuantity;
+    if(newQuantity = 0){
+     document.getElementById(iSlot).value = "n";
+    }
+  
+  if(document.getElementById(iSlot).value == "Health Potion"){
+   hp(20, "a");
+  }
+  
+  
+  inventory();
+  }
+  
   </script>
  </body>
 </html>
