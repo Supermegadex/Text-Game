@@ -648,7 +648,8 @@ function levelUp(level){
     var iSlot = "inventory" + slot;
     var newQuantity = Number(document.getElementById(iSlot).name) - 1;
     document.getElementById(iSlot).name = newQuantity;
-    if(newQuantity = 0){
+    
+    if(document.getElementById(iSlot).name == "0"){
      document.getElementById(iSlot).value = "n";
     }
   
@@ -657,7 +658,7 @@ function levelUp(level){
   }
   
   
-  inventory();
+  main();
   }
   
   </script>
