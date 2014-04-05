@@ -548,6 +548,7 @@ if(to == "3"){
      document.getElementById('inventory5').name = localStorage.inventoryQ53;
      document.getElementById('inventory6').name = localStorage.inventoryQ63;
      }
+     main();
     }
 function levelUp(level){
  document.getElementById('level').value = level;
@@ -558,34 +559,40 @@ function levelUp(level){
     var inventory1 = "";
    }
    else{
-    var inventory1 = "<button onclick='useItem' class='btn btn-info'>" + document.getElementById('inventory1').value+ ": " + document.getElementById('inventory1').name + "</button>";
+    var inventory1 = "<button onclick='useItem(1)' class='btn btn-info'>" + document.getElementById('inventory1').value+ " <span class='badge'>" + document.getElementById('inventory1').name + "</span></button>";
    }
    if(document.getElementById('inventory2').value == "n"){
     var inventory2 = "";
    }
    else{
-    var inventory2 = document.getElementById('inventory2').value+ " " + document.getElementById('inventory2').name;
+    var inventory2 = "<button onclick='useItem(2)' class='btn btn-info'>" + document.getElementById('inventory2').value+ " <span class='badge'>" + document.getElementById('inventory2').name + "</span></button>";
    }
    if(document.getElementById('inventory3').value == "n"){
     var inventory3 = "";
    }
    else{
-    var inventory3 = document.getElementById('inventory3').value+ " " + document.getElementById('inventory3').name;
+    var inventory3 = "<button onclick='useItem(3)' class='btn btn-info'>" + document.getElementById('inventory3').value+ " <span class='badge'>" + document.getElementById('inventory3').name + "</span></button>";
    }
    if(document.getElementById('inventory4').value == "n"){
     var inventory4 = "";
    }
    else{
-    var inventory4 = document.getElementById('inventory4').value+ " " + document.getElementById('inventory4').name;
+    var inventory4 = "<button onclick='useItem(4)' class='btn btn-info'>" + document.getElementById('inventory4').value+ " <span class='badge'>" + document.getElementById('inventory4').name + "</span></button>";
    }
    if(document.getElementById('inventory5').value == "n"){
     var inventory5 = "";
    }
    else{
-    var inventory5 = document.getElementById('inventory5').value+ ": " + document.getElementById('inventory5').name;
+    var inventory5 = "<button onclick='useItem(5)' class='btn btn-info'>" + document.getElementById('inventory5').value+ " <span class='badge'>" + document.getElementById('inventory5').name + "</span></button>";
    }
    
-   document.getElementById('story').innerHTML = inventory1 + inventory2 + inventory3 + inventory4 + inventory5;
+   if(document.getElementById('inventory6').value == "n"){
+    var inventory6 = "";
+   }
+   else{
+    var inventory6 = "<button onclick='useItem(6)' class='btn btn-info'>" + document.getElementById('inventory6').value+ " <span class='badge'>" + document.getElementById('inventory6').name + "</span></button>";
+   }
+   document.getElementById('story').innerHTML = inventory1 + inventory2 + inventory3 + inventory4 + inventory5 + inventory6;
   }
   
   function itemGet(item, quantity){
@@ -613,6 +620,23 @@ function levelUp(level){
     }
     else{
      document.getElementById('inventory2').name = quantity;
+    }
+   }
+   else if(inventory3i == "n" || inventory3i == item){
+    document.getElementById('inventory3').value = item;
+    if(inventory1i == item){
+     document.getElementById('inventory3').name = Number(document.getElementById('inventory3').name) + Number(quantity);
+    }
+    else{
+     document.getElementById('inventory3').name = quantity;
+    }
+   }if(inventory1i == "n" || inventory1i == item){
+    document.getElementById('inventory4').value = item;
+    if(inventory1i == item){
+     document.getElementById('inventory4').name = Number(document.getElementById('inventory4').name) + Number(quantity);
+    }
+    else{
+     document.getElementById('inventory4').name = quantity;
     }
    }
   }
