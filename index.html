@@ -175,12 +175,14 @@
   <input type="hidden" id="hitPoints">
   <input type="hidden" id="level" value="">
   
-  <input type="hidden" id="inventory1" value="" name>
-  <input type="hidden" id="inventory2" value="" name>
-  <input type="hidden" id="inventory3" value="" name>
-  <input type="hidden" id="inventory4" value="" name>
-  <input type="hidden" id="inventory5" value="" name>
-  <input type="hidden" id="inventory6" value="" name>
+  <input type="hidden" id="inventory1" value="n" name="0">
+  <input type="hidden" id="inventory2" value="n" name="0">
+  <input type="hidden" id="inventory3" value="n" name="0">
+  <input type="hidden" id="inventory4" value="n" name="0">
+  <input type="hidden" id="inventory5" value="n" name="0">
+  <input type="hidden" id="inventory6" value="n" name="0">
+  
+  <input type="hidden" id="silly mode" value="false">
   
   </div>
   <script>
@@ -254,11 +256,11 @@
    }
    
    function main(){
-     var forest; if(document.getElementById('forestFound').value == "true"){
-      forest = "<button type='button' class='btn btn-succeed>Forest</button>";
+      if(document.getElementById('forestFound').value == "true"){
+      var forest = "<button type='button' class='btn btn-succeed>Forest</button>";
      }
      else{
-      forest = "";
+      var forest = "";
      }
      document.getElementById('enemyHP').innerHTML = "";
      
@@ -278,8 +280,14 @@
       document.getElementById('lv5').class = "active";
      }
      document.getElementById('detail-pic').src = "data:image/jpeg;base64,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";
+     if (document.getElementById('silly mode').value == "true"){
+      var silly = "<button onclick='inventory(\"Cheese!!, 100\")'";
+     }
+     else{
+      var silly = "";
+     }
      document.getElementById('story').innerHTML = document.getElementById('name').value + gameEvents.stories.hub;
-     document.getElementById('input').innerHTML = gameEvents.input.hub + forest;
+     document.getElementById('input').innerHTML = gameEvents.input.hub + forest + silly;
    }
    
    function forestFind(){
@@ -398,12 +406,18 @@
       localStorage.dex1 = document.getElementById('dex').innerHTML;
       localStorage.cha1 = document.getElementById('cha').innerHTML;
       localStorage.level1 = document.getElementById('level').value;
-      localstorage.inventorySlot1 = document.getElementById('inventory1').value;
-      localstorage.inventorySlot2 = document.getElementById('inventory2').value;
-      localstorage.inventorySlot3 = document.getElementById('inventory3').value;
-      localstorage.inventorySlot4 = document.getElementById('inventory4').value;
-      localstorage.inventorySlot5 = document.getElementById('inventory5').value;
-      localstorage.inventorySlot6 = document.getElementById('inventory6').value;
+      localStorage.inventorySlot1 = document.getElementById('inventory1').value;
+      localStorage.inventorySlot2 = document.getElementById('inventory2').value;
+      localStorage.inventorySlot3 = document.getElementById('inventory3').value;
+      localStorage.inventorySlot4 = document.getElementById('inventory4').value;
+      localStorage.inventorySlot5 = document.getElementById('inventory5').value;
+      localStorage.inventorySlot6 = document.getElementById('inventory6').value;
+      localStorage.inventoryQ1 = document.getElementById('inventory1').name;
+      localStorage.inventoryQ2 = document.getElementById('inventory2').name;
+      localStorage.inventoryQ3 = document.getElementById('inventory3').name;
+      localStorage.inventoryQ4 = document.getElementById('inventory4').name;
+      localStorage.inventoryQ5 = document.getElementById('inventory5').name;
+      localStorage.inventoryQ6 = document.getElementById('inventory6').name;
      }
 if(to == "3"){
       localStorage.name3 = document.getElementById('name').value;
@@ -417,12 +431,18 @@ if(to == "3"){
       localStorage.dex3 = document.getElementById('dex').innerHTML;
       localStorage.cha3 = document.getElementById('cha').innerHTML;
       localStorage.level3 = document.getElementById('level').value;
-      localstorage.inventorySlot1 = document.getElementById('inventory1').value;
-      localstorage.inventorySlot2 = document.getElementById('inventory2').value;
-      localstorage.inventorySlot3 = document.getElementById('inventory3').value;
-      localstorage.inventorySlot4 = document.getElementById('inventory4').value;
-      localstorage.inventorySlot5 = document.getElementById('inventory5').value;
-      localstorage.inventorySlot6 = document.getElementById('inventory6').value;
+      localStorage.inventorySlot13 = document.getElementById('inventory1').value;
+      localStorage.inventorySlot23 = document.getElementById('inventory2').value;
+      localStorage.inventorySlot33 = document.getElementById('inventory3').value;
+      localStorage.inventorySlot43 = document.getElementById('inventory4').value;
+      localStorage.inventorySlot53 = document.getElementById('inventory5').value;
+      localStorage.inventorySlot63 = document.getElementById('inventory6').value;
+      localStorage.inventoryQ13 = document.getElementById('inventory1').name;
+      localStorage.inventoryQ23 = document.getElementById('inventory2').name;
+      localStorage.inventoryQ33 = document.getElementById('inventory3').name;
+      localStorage.inventoryQ43 = document.getElementById('inventory4').name;
+      localStorage.inventoryQ53 = document.getElementById('inventory5').name;
+      localStorage.inventoryQ63 = document.getElementById('inventory6').name;
      }
     if(to == "2"){
       localStorage.name2 = document.getElementById('name').value;
@@ -436,12 +456,18 @@ if(to == "3"){
       localStorage.dex2 = document.getElementById('dex').innerHTML;
       localStorage.cha2 = document.getElementById('cha').innerHTML;
       localStorage.level2 = document.getElementById('level').value;
-      localstorage.inventorySlot1 = document.getElementById('inventory1').value;
-      localstorage.inventorySlot2 = document.getElementById('inventory2').value;
-      localstorage.inventorySlot3 = document.getElementById('inventory3').value;
-      localstorage.inventorySlot4 = document.getElementById('inventory4').value;
-      localstorage.inventorySlot5 = document.getElementById('inventory5').value;
-      localstorage.inventorySlot6 = document.getElementById('inventory6').value;
+      localStorage.inventorySlot12 = document.getElementById('inventory1').value;
+      localStorage.inventorySlot22 = document.getElementById('inventory2').value;
+      localStorage.inventorySlot32 = document.getElementById('inventory3').value;
+      localStorage.inventorySlot42 = document.getElementById('inventory4').value;
+      localStorage.inventorySlot52 = document.getElementById('inventory5').value;
+      localStorage.inventorySlot62 = document.getElementById('inventory6').value;
+      localStorage.inventoryQ12 = document.getElementById('inventory1').name;
+      localStorage.inventoryQ22 = document.getElementById('inventory2').name;
+      localStorage.inventoryQ32 = document.getElementById('inventory3').name;
+      localStorage.inventoryQ42 = document.getElementById('inventory4').name;
+      localStorage.inventoryQ52 = document.getElementById('inventory5').name;
+      localStorage.inventoryQ62 = document.getElementById('inventory6').name;
      }
      main();
     }
@@ -459,12 +485,18 @@ if(to == "3"){
      document.getElementById('int').innerHTML = localStorage.int1;
      document.getElementById('str').innerHTML = localStorage.str1;
      document.getElementById('level').value = localStorage.level1;
-     document.getElementById('inventory1').value = localstorage.inventorySlot1;
-     document.getElementById('inventory2').value = localstorage.inventorySlot2;
-     document.getElementById('inventory3').value = localstorage.inventorySlot3;
-     document.getElementById('inventory4').value = localstorage.inventorySlot4;
-     document.getElementById('inventory5').value = localstorage.inventorySlot5;
-     document.getElementById('inventory6').value = localstorage.inventorySlot6;
+     document.getElementById('inventory1').value = localStorage.inventorySlot1;
+     document.getElementById('inventory2').value = localStorage.inventorySlot2;
+     document.getElementById('inventory3').value = localStorage.inventorySlot3;
+     document.getElementById('inventory4').value = localStorage.inventorySlot4;
+     document.getElementById('inventory5').value = localStorage.inventorySlot5;
+     document.getElementById('inventory6').value = localStorage.inventorySlot6;
+     document.getElementById('inventory1').name = localStorage.inventoryQ1;
+     document.getElementById('inventory2').name = localStorage.inventoryQ2;
+     document.getElementById('inventory3').name = localStorage.inventoryQ3;
+     document.getElementById('inventory4').name = localStorage.inventoryQ4;
+     document.getElementById('inventory5').name = localStorage.inventoryQ5;
+     document.getElementById('inventory6').name = localStorage.inventoryQ6;
      }
      if(from == "2"){
      document.getElementById('hpBar').innerHTML = localStorage.hp2;
@@ -478,6 +510,18 @@ if(to == "3"){
      document.getElementById('int').innerHTML = localStorage.int2;
      document.getElementById('str').innerHTML = localStorage.str2;
      document.getElementById('level').value = localStorage.level2;
+     document.getElementById('inventory1').value = localStorage.inventorySlot12;
+     document.getElementById('inventory2').value = localStorage.inventorySlot22;
+     document.getElementById('inventory3').value = localStorage.inventorySlot32;
+     document.getElementById('inventory4').value = localStorage.inventorySlot42;
+     document.getElementById('inventory5').value = localStorage.inventorySlot52;
+     document.getElementById('inventory6').value = localStorage.inventorySlot62;
+     document.getElementById('inventory1').name = localStorage.inventoryQ12;
+     document.getElementById('inventory2').name = localStorage.inventoryQ22;
+     document.getElementById('inventory3').name = localStorage.inventoryQ32;
+     document.getElementById('inventory4').name = localStorage.inventoryQ42;
+     document.getElementById('inventory5').name = localStorage.inventoryQ52;
+     document.getElementById('inventory6').name = localStorage.inventoryQ62;
      }
      if(from == "3"){
      document.getElementById('hpBar').innerHTML = localStorage.hp3;
@@ -491,6 +535,18 @@ if(to == "3"){
      document.getElementById('int').innerHTML = localStorage.int3;
      document.getElementById('str').innerHTML = localStorage.str3;
      document.getElementById('level').value = localStorage.level3;
+     document.getElementById('inventory1').value = localStorage.inventorySlot13;
+     document.getElementById('inventory2').value = localStorage.inventorySlot23;
+     document.getElementById('inventory3').value = localStorage.inventorySlot33;
+     document.getElementById('inventory4').value = localStorage.inventorySlot43;
+     document.getElementById('inventory5').value = localStorage.inventorySlot53;
+     document.getElementById('inventory6').value = localStorage.inventorySlot63;
+     document.getElementById('inventory1').name = localStorage.inventoryQ13;
+     document.getElementById('inventory2').name = localStorage.inventoryQ23;
+     document.getElementById('inventory3').name = localStorage.inventoryQ33;
+     document.getElementById('inventory4').name = localStorage.inventoryQ43;
+     document.getElementById('inventory5').name = localStorage.inventoryQ53;
+     document.getElementById('inventory6').name = localStorage.inventoryQ63;
      }
     }
 function levelUp(level){
@@ -498,35 +554,35 @@ function levelUp(level){
 }
   
   function inventory(){
-   if(document.getElementById('inventory1').value == ""){
+   if(document.getElementById('inventory1').value == "n"){
     var inventory1 = "";
    }
    else{
-    var inventory1 = document.getElementById('inventory1').value+ " " + document.getElementById('inventory1').name;
+    var inventory1 = "<button onclick='useItem' class='btn btn-info'>" + document.getElementById('inventory1').value+ ": " + document.getElementById('inventory1').name + "</button>";
    }
-   if(document.getElementById('inventory2').value == ""){
+   if(document.getElementById('inventory2').value == "n"){
     var inventory2 = "";
    }
    else{
     var inventory2 = document.getElementById('inventory2').value+ " " + document.getElementById('inventory2').name;
    }
-   if(document.getElementById('inventory3').value == ""){
+   if(document.getElementById('inventory3').value == "n"){
     var inventory3 = "";
    }
    else{
     var inventory3 = document.getElementById('inventory3').value+ " " + document.getElementById('inventory3').name;
    }
-   if(document.getElementById('inventory4').value == ""){
+   if(document.getElementById('inventory4').value == "n"){
     var inventory4 = "";
    }
    else{
     var inventory4 = document.getElementById('inventory4').value+ " " + document.getElementById('inventory4').name;
    }
-   if(document.getElementById('inventory5').value == ""){
+   if(document.getElementById('inventory5').value == "n"){
     var inventory5 = "";
    }
    else{
-    var inventory5 = document.getElementById('inventory5').value+ " " + document.getElementById('inventory5').name;
+    var inventory5 = document.getElementById('inventory5').value+ ": " + document.getElementById('inventory5').name;
    }
    
    document.getElementById('story').innerHTML = inventory1 + inventory2 + inventory3 + inventory4 + inventory5;
@@ -541,13 +597,22 @@ function levelUp(level){
    var inventory3q = document.getElementById('inventory3').name;
    var inventory4i = document.getElementById('inventory4').value;
    var inventory4q = document.getElementById('inventory4').name;
-   if(inventory1i == ""  || inventory1i == item){
-    doument.getElementsById('inventory1').value = item;
-    if(inventory1 == item){
-     document.getElementById('inventory1').name = document.getElementById('inventory').name + quantity;
+   if(inventory1i == "n" || inventory1i == item){
+    document.getElementById('inventory1').value = item;
+    if(inventory1i == item){
+     document.getElementById('inventory1').name = Number(document.getElementById('inventory1').name) + Number(quantity);
     }
     else{
-     document.getElementById('inventory1').name = item;
+     document.getElementById('inventory1').name = quantity;
+    }
+   }
+   else if(inventory2i == "n" || inventory2i == item){
+    document.getElementById('inventory2').value = item;
+    if(inventory1i == item){
+     document.getElementById('inventory2').name = Number(document.getElementById('inventory2').name) + Number(quantity);
+    }
+    else{
+     document.getElementById('inventory2').name = quantity;
     }
    }
   }
