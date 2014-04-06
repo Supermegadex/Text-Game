@@ -116,7 +116,7 @@
     <input type="radio" name="talent" id="str-focus"> Bodybuilding
   </label>
   <label class="btn btn-info btn-sm">
-    <input type="radio" name="talent" id="int-focus"> Acedemics
+    <input type="radio" name="talent" id="int-focus"> Academics
   </label>
   <label class="btn btn-info btn-sm">
     <input type="radio" name="talent" id="wis-focus"> Prayer
@@ -172,20 +172,23 @@
     </div>
   </div>
 </div>
+  <!-- PJ, this is where you hack!! -->
   <div>
   <input type="hidden" id="name" value="">
   <input type="hidden" id="forestFound" value="false">
   <input type="hidden" id="hitPoints">
   <input type="hidden" id="level" value="">
-  
-  <input type="hidden" id="inventory1" value="n" name="0">
-  <input type="hidden" id="inventory2" value="n" name="0">
-  <input type="hidden" id="inventory3" value="n" name="0">
-  <input type="hidden" id="inventory4" value="n" name="0">
-  <input type="hidden" id="inventory5" value="n" name="0">
-  <input type="hidden" id="inventory6" value="n" name="0">
-  
+  <!-- Here you can change your inventory. Change the value for the name. Name is quantity. -->
+  <input type="hidden" id="inventory1" value="n" name="0" class="">
+  <input type="hidden" id="inventory2" value="n" name="0" class="">
+  <input type="hidden" id="inventory3" value="n" name="0" class="">
+  <input type="hidden" id="inventory4" value="n" name="0" class="">
+  <input type="hidden" id="inventory5" value="n" name="0" class="">
+  <input type="hidden" id="inventory6" value="n" name="0" class="">
+  <!-- value="true" enables silly mode -->
   <input type="hidden" id="silly mode" value="false">
+  <!-- value is name of weapon, name is strength, class is heavy, light, ranged or fist -->
+  <input type="hidden" id="weapon" value="none" name="0" class="fist">
   
   </div>
   <script>
@@ -244,8 +247,8 @@
      document.getElementById('input').innerHTML = gameEvents.input.explore1;
      itemGet("Health Potion", 1);
     }
-    var forestFound = document.getElementById('forestFound').value;
     if(adventure >= 7){
+     var forestFound = document.getElementById('forestFound').value;
      if(forestFound == "false"){
       document.getElementById('story').innerHTML = gameEvents.stories.explore2;
       document.getElementById('input').innerHTML = gameEvents.input.explore2;
@@ -332,7 +335,6 @@
       wolfDefeat();
      }
      else{
-      hp(10, "s")
       document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
     100\
   </div>';
@@ -342,10 +344,30 @@
     function  wolfDefeat(){
      main();
      xp(10);
+     if(document.getElementById('silly mode').value == "true"){
+      itemGet("Cuban Cheese", 2);
+     }
     }
     function fight(name, fightHP, victory, fightStr){
+     var weapon = document.getElementById('weapon').value;
+     var weaponStr = document.getElementById('weapon').name;
+     var weaponClass = document.getElementById('weapon').className;
+     var playerStr = Math.round(document.getElementById('str').innerHTML / fightHP * 10) + weaponStr;
+     var story = "test";
+     if(weaponClass == "fist"){
+      story = "You use your fists to attack the " + name + ".";
+     }
+      if(weaponClass == "melee"){
+       story = "You run up to attack the " + name + " with your " + weapon + ". (" + String(playerStr) + ")";
+      }
+      if(weaponClass == "heavy"){
+       story = "You swing down your " + weapon + " to wound the " + name + ". (" + String(playerStr) + ")";
+      }
+      if(weaponClass == "ranged"){
+       story = "You shoot the " + name + " with your " + weapon + ". (" + String(playerStr) + ")";
+      }
+     document.getElementById('story').innerHTML = story;
      var currentEnemyHP = document.getElementById('enemyHPBar').innerHTML;
-     var playerStr = Math.round(document.getElementById('str').innerHTML / fightHP * 10);
      var newEnemyHP = currentEnemyHP - playerStr;
      document.getElementById('enemyHPBar').innerHTML = newEnemyHP;
      document.getElementById('enemyHPBar').style.width = newEnemyHP + "%";
@@ -421,6 +443,11 @@
       localStorage.inventoryQ4 = document.getElementById('inventory4').name;
       localStorage.inventoryQ5 = document.getElementById('inventory5').name;
       localStorage.inventoryQ6 = document.getElementById('inventory6').name;
+      localStorage.xp1 = document.getElementById('xpPoints').innerHTML;
+      localStorage.xpPercent1 = document.getElementById('xpBar').style.width;
+      localStorage.weapon1 = document.getElementById('weapon').value;
+      localStorage.weaponStr1 = document.getElementById('weapon').name;
+      localStorage.weaponType1 = document.getElementById('weapon').class;
      }
 if(to == "3"){
       localStorage.name3 = document.getElementById('name').value;
@@ -446,6 +473,11 @@ if(to == "3"){
       localStorage.inventoryQ43 = document.getElementById('inventory4').name;
       localStorage.inventoryQ53 = document.getElementById('inventory5').name;
       localStorage.inventoryQ63 = document.getElementById('inventory6').name;
+      localStorage.xp3 = document.getElementById('xpPoints').innerHTML;
+      localStorage.xpPercent3 = document.getElementById('xpBar').style.width;
+      localStorage.weapon3 = document.getElementById('weapon').value;
+      localStorage.weaponStr3 = document.getElementById('weapon').name;
+      localStorage.weaponType3 = document.getElementById('weapon').class;
      }
     if(to == "2"){
       localStorage.name2 = document.getElementById('name').value;
@@ -471,6 +503,11 @@ if(to == "3"){
       localStorage.inventoryQ42 = document.getElementById('inventory4').name;
       localStorage.inventoryQ52 = document.getElementById('inventory5').name;
       localStorage.inventoryQ62 = document.getElementById('inventory6').name;
+      localStorage.xp2 = document.getElementById('xpPoints').innerHTML;
+      localStorage.xpPercent2 = document.getElementById('xpBar').style.width;
+      localStorage.weapon2 = document.getElementById('weapon').value;
+      localStorage.weaponStr2 = document.getElementById('weapon').name;
+      localStorage.weaponType2 = document.getElementById('weapon').class;
      }
      main();
     }
@@ -500,6 +537,11 @@ if(to == "3"){
      document.getElementById('inventory4').name = localStorage.inventoryQ4;
      document.getElementById('inventory5').name = localStorage.inventoryQ5;
      document.getElementById('inventory6').name = localStorage.inventoryQ6;
+     document.getElementById('xpPoints').innerHTML = localStorage.xp1;
+     document.getElementById('xpBar').style.width = localStorage.xpPercent1;
+     document.getElementById('weapon').value = localStorage.weapon1;
+     document.getElementById('weapon').name = localStorage.weaponStr1;
+     document.getElementById('weapon').class = localStorage.weaponType1;
      }
      if(from == "2"){
      document.getElementById('hpBar').innerHTML = localStorage.hp2;
@@ -525,6 +567,11 @@ if(to == "3"){
      document.getElementById('inventory4').name = localStorage.inventoryQ42;
      document.getElementById('inventory5').name = localStorage.inventoryQ52;
      document.getElementById('inventory6').name = localStorage.inventoryQ62;
+     document.getElementById('xpPoints').innerHTML = localStorage.xp2;
+     document.getElementById('xpBar').style.width = localStorage.xpPercent2;
+     document.getElementById('weapon').value = localStorage.weapon2;
+     document.getElementById('weapon').name = localStorage.weaponStr2;
+     document.getElementById('weapon').class = localStorage.weaponType2;
      }
      if(from == "3"){
      document.getElementById('hpBar').innerHTML = localStorage.hp3;
@@ -550,6 +597,11 @@ if(to == "3"){
      document.getElementById('inventory4').name = localStorage.inventoryQ43;
      document.getElementById('inventory5').name = localStorage.inventoryQ53;
      document.getElementById('inventory6').name = localStorage.inventoryQ63;
+     document.getElementById('xpPoints').innerHTML = localStorage.xp3;
+     document.getElementById('xpBar').style.width = localStorage.xpPercent3;
+     document.getElementById('weapon').value = localStorage.weapon3;
+     document.getElementById('weapon').name = localStorage.weaponStr3;
+     document.getElementById('weapon').class = localStorage.weaponType3;
      }
      main();
     }
@@ -559,41 +611,41 @@ function levelUp(level){
   
   function inventory(){
    if(document.getElementById('inventory1').value == "n"){
-    var inventory1 = "<button class='btn btn-info'>None</button>";
+    var inventory1 = "<button class='btn btn-warning'>None</button>";
    }
    else{
-    var inventory1 = "<button onclick='useItem(\"1\")' class='btn btn-info'>" + document.getElementById('inventory1').value+ " <span class='badge'>" + document.getElementById('inventory1').name + "</span></button>";
+    var inventory1 = "<button onclick='useItem(\"1\")' class='btn btn-warning'>" + document.getElementById('inventory1').value+ " <span class='badge'>" + document.getElementById('inventory1').name + "</span></button>";
    }
    if(document.getElementById('inventory2').value == "n"){
-    var inventory2 = "<button class='btn btn-primary'>None</button>";
+    var inventory2 = "<button class='btn btn-warning'>None</button>";
    }
    else{
-    var inventory2 = "<button onclick='useItem(\"2\")' class='btn btn-primary'>" + document.getElementById('inventory2').value+ " <span class='badge'>" + document.getElementById('inventory2').name + "</span></button>";
+    var inventory2 = "<button onclick='useItem(\"2\")' class='btn btn-warning'>" + document.getElementById('inventory2').value+ " <span class='badge'>" + document.getElementById('inventory2').name + "</span></button>";
    }
    if(document.getElementById('inventory3').value == "n"){
-    var inventory3 = "<button class='btn btn-primary'>None</button>";
+    var inventory3 = "<button class='btn btn-warning'>None</button>";
    }
    else{
-    var inventory3 = "<button onclick='useItem(\"3\")' class='btn btn-info'>" + document.getElementById('inventory3').value+ " <span class='badge'>" + document.getElementById('inventory3').name + "</span></button>";
+    var inventory3 = "<button onclick='useItem(\"3\")' class='btn btn-warning'>" + document.getElementById('inventory3').value+ " <span class='badge'>" + document.getElementById('inventory3').name + "</span></button>";
    }
    if(document.getElementById('inventory4').value == "n"){
-    var inventory4 = "<button class='btn btn-info'>None</button>";
+    var inventory4 = "<button class='btn btn-warning'>None</button>";
    }
    else{
-    var inventory4 = "<button onclick='useItem(\"4\")' class='btn btn-primary'>" + document.getElementById('inventory4').value+ " <span class='badge'>" + document.getElementById('inventory4').name + "</span></button>";
+    var inventory4 = "<button onclick='useItem(\"4\")' class='btn btn-warning'>" + document.getElementById('inventory4').value+ " <span class='badge'>" + document.getElementById('inventory4').name + "</span></button>";
    }
    if(document.getElementById('inventory5').value == "n"){
-    var inventory5 = "<button class='btn btn-info'>None</button>";
+    var inventory5 = "<button class='btn btn-warning'>None</button>";
    }
    else{
-    var inventory5 = "<button onclick='useItem(\"5\")' class='btn btn-info'>" + document.getElementById('inventory5').value+ " <span class='badge'>" + document.getElementById('inventory5').name + "</span></button>";
+    var inventory5 = "<button onclick='useItem(\"5\")' class='btn btn-warning'>" + document.getElementById('inventory5').value+ " <span class='badge'>" + document.getElementById('inventory5').name + "</span></button>";
    }
    
    if(document.getElementById('inventory6').value == "n"){
-    var inventory6 = "<button class='btn btn-primary'>None</button>";
+    var inventory6 = "<button class='btn btn-warning'>None</button>";
    }
    else{
-    var inventory6 = "<button onclick='useItem(\"6\")' class='btn btn-primary'>" + document.getElementById('inventory6').value+ " <span class='badge'>" + document.getElementById('inventory6').name + "</span></button>";
+    var inventory6 = "<button onclick='useItem(\"6\")' class='btn btn-warning'>" + document.getElementById('inventory6').value+ " <span class='badge'>" + document.getElementById('inventory6').name + "</span></button>";
    }
    document.getElementById('story').innerHTML = inventory1 + " " + inventory2 + " " + inventory3 + " " + inventory4 + " " + inventory5 + " " + inventory6;
   }
@@ -646,21 +698,44 @@ function levelUp(level){
   }
   function useItem(slot){
     var iSlot = "inventory" + slot;
+    var item = document.getElementById(iSlot).value;
+    var weaponCheck = document.getElementById(iSlot).class.split(" ");
+    
+    if(weaponCheck[0] == "weapon"){
+     var weapon = true;
+    }
+    else{
     var newQuantity = Number(document.getElementById(iSlot).name) - 1;
     document.getElementById(iSlot).name = newQuantity;
     
     if(document.getElementById(iSlot).name == "0"){
      document.getElementById(iSlot).value = "n";
     }
-  
-  if(document.getElementById(iSlot).value == "Health Potion"){
-   hp(20, "a");
+    var weapon = false;
+    }
+    
+    itemEffect(item, iSlot, weapon);
+    inventory();
   }
   
-  
-  main();
+  function itemEffect(item, slot, weapon){
+   
+   if(weapon = true){
+    document.getElementById('weapon').value = item;
+    document.getElementById('weapon').class = weaponCheck[1];
+    document.getElementById('weapon').name = document.getElementById(slot).name;
+   }
+   
+   else{
+   if(item == "Health Potion"){
+    hp(20, "a");
+   }
+   if(item == "Cuban Cheese"){
+    document.getElementById('dex').innerHTML--;
+    document.getElementById('str').innerHTML++;
+   }
+   }
   }
-  
   </script>
  </body>
 </html>
