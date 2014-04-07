@@ -699,19 +699,12 @@ function levelUp(level){
   function useItem(slot){
     var iSlot = "inventory" + slot;
     var item = document.getElementById(iSlot).value;
-    var weaponCheck = document.getElementById(iSlot).class.split(" ");
     
-    if(weaponCheck[0] == "weapon"){
-     var weapon = true;
-    }
-    else{
     var newQuantity = Number(document.getElementById(iSlot).name) - 1;
     document.getElementById(iSlot).name = newQuantity;
     
     if(document.getElementById(iSlot).name == "0"){
      document.getElementById(iSlot).value = "n";
-    }
-    var weapon = false;
     }
     
     itemEffect(item, iSlot, weapon);
@@ -719,21 +712,12 @@ function levelUp(level){
   }
   
   function itemEffect(item, slot, weapon){
-   
-   if(weapon = true){
-    document.getElementById('weapon').value = item;
-    document.getElementById('weapon').class = weaponCheck[1];
-    document.getElementById('weapon').name = document.getElementById(slot).name;
-   }
-   
-   else{
    if(item == "Health Potion"){
     hp(20, "a");
    }
    if(item == "Cuban Cheese"){
     document.getElementById('dex').innerHTML--;
     document.getElementById('str').innerHTML++;
-   }
    }
   }
   </script>
