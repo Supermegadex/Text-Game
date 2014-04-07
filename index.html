@@ -699,7 +699,7 @@ function levelUp(level){
   function useItem(slot){
     var iSlot = "inventory" + slot;
     var item = document.getElementById(iSlot).value;
-    
+      
     var newQuantity = Number(document.getElementById(iSlot).name) - 1;
     document.getElementById(iSlot).name = newQuantity;
     
@@ -707,11 +707,12 @@ function levelUp(level){
      document.getElementById(iSlot).value = "n";
     }
     
-    itemEffect(item, iSlot, weapon);
+    itemEffect(item, iSlot);
     inventory();
   }
   
-  function itemEffect(item, slot, weapon){
+  function itemEffect(item, slot){
+   
    if(item == "Health Potion"){
     hp(20, "a");
    }
