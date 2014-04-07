@@ -16,7 +16,7 @@
   explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
   explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
   explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
-  fight:'<button onclick='+"'"+'fight("Wolf", 11, "wolfDefeat()", 5)'+"'"+' class="btn btn-danger">Attack!</button> | <button type="button" class="btn btn-warning" onclick="flee(7)">Try to Flee</button>',
+  wolfInput: "<button onclick='fight(\"Wolf\", 100, \"wolf\", 20)' class='btn btn-danger'>Fight</button> or <button onclick='flee(8)' class='btn btn-warning'>Run</button>"
  },
  items: {
  
@@ -331,15 +331,11 @@
     }
     function wolfFight(wolfHP, wolfStr){
      var playerStr = document.getElementById('str');
-     if (playerStr >= wolfHP){
-      wolfDefeat();
-     }
-     else{
       document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
     100\
   </div>';
-     document.getElementById('input').innerHTML = gameEvents.input.fight;
-     }
+     document.getElementById('input').innerHTML = ;
+     
     }
     function  wolfDefeat(){
      main();
