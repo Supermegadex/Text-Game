@@ -10,16 +10,16 @@
   explore1: "You walk around.",
   explore2: "You find a forest.",
   explore3: "You encounter a wolf.",
+  forest: "You explore the forest and find nothing. You do enjoy the fresh air, though.",
  },
  input: {
   hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button>",
   explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
   explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
   explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
-  wolfInput: "<button onclick='fight(\"Wolf\", 100, \"wolf\", 20)' class='btn btn-danger'>Fight</button> or <button onclick='flee(8)' class='btn btn-warning'>Run</button>"
- },
- items: {
- 
+  wolfInput: "<button onclick='fight(\"Wolf\", 20, \"wolf\", 15)' class='btn btn-danger'>Fight</button> or <button onclick='flee(8)' class='btn btn-warning'>Run</button>",
+  forest: "<button onclick='forest()' class='btn btn-primary'>Forest</button>",
+  cave: "<button onclick='cave()' class='btn btn-primary'>Cave</button>",
  },
 };
   </script>
@@ -176,6 +176,7 @@
   <div>
   <input type="hidden" id="name" value="">
   <input type="hidden" id="forestFound" value="false">
+  <input type="hidden" id="caveFound" value="false">
   <input type="hidden" id="hitPoints">
   <input type="hidden" id="level" value="">
   <!-- Here you can change your inventory. Change the value for the name. Name is quantity. -->
@@ -222,7 +223,7 @@
    document.getElementById('story').innerHTML = name + ", are you ready?";
    document.getElementById('name').value = name;
    document.getElementById('input').innerHTML = "<button class='btn btn-info' type='button' onclick='explore()'>Yes! <i class='fa fa-arrow-circle-o-right'></i></button> <button type='button' onclick='createModal()' class='btn btn-warning'>No. <i class='fa fa-arrow-circle-o-left'></i></button>";
-   document.getElementById('forestFound').innerHTML = "false";
+   document.getElementById('forestFound').value = "false";
    }
    function createModal(){
    $('#createModal').modal();
@@ -262,12 +263,6 @@
    }
    
    function main(){
-      if(document.getElementById('forestFound').value == "true"){
-      var forest = "<button type='button' class='btn btn-succeed>Forest</button>";
-     }
-     else{
-      var forest = "";
-     }
      document.getElementById('enemyHP').innerHTML = "";
      
      if(document.getElementById('level').value > 1){
@@ -286,14 +281,22 @@
       document.getElementById('lv5').class = "active";
      }
      document.getElementById('detail-pic').src = "data:image/jpeg;base64,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";
-     if (document.getElementById('silly mode').value == "true"){
-      var silly = "<button onclick='inventory(\"Cheese!!, 100\")'";
-     }
-     else{
-      var silly = "";
-     }
-     document.getElementById('story').innerHTML = document.getElementById('name').value + gameEvents.stories.hub;
-     document.getElementById('input').innerHTML = gameEvents.input.hub + forest + silly;
+       var forest;
+           var cave;
+           if(document.getElementById('forestFound').value == "true"){
+           forest = gameEvents.input.forest;
+       }
+       else{
+        forest = "";
+       }
+       if(document.getElementById('caveFound').value == "true"){
+           cave = gameEvents.input.cave;
+       }
+       else{
+        cave = "";
+       }
+       document.getElementById('story').innerHTML = document.getElementById('name').value + gameEvents.stories.hub;
+       document.getElementById('input').innerHTML = gameEvents.input.hub + forest + cave;
    }
    
    function forestFind(){
@@ -334,7 +337,7 @@
       document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
     100\
   </div>';
-     document.getElementById('input').innerHTML = ;
+     document.getElementById('input').innerHTML = gameEvents.input.wolfInput;
      
     }
     function  wolfDefeat(){
@@ -369,6 +372,12 @@
      document.getElementById('enemyHPBar').style.width = newEnemyHP + "%";
      hp(fightStr, "s");
      if(newEnemyHP <= 0){
+      Defeat("wolf");
+     }
+    }
+    
+    function Defeat(opponent){
+     if(opponent == "wolf"){
       wolfDefeat();
      }
     }
@@ -717,6 +726,34 @@ function levelUp(level){
     document.getElementById('str').innerHTML++;
    }
   }
+      function forest(){
+       var forestExplore = Math.floor((Math.random()*10)+1);
+       if(forestExplore <= 4){
+        document.getElementById('story').innerHTML = gameEvents.stories.forest;
+        document.getElementById('input').innerHTML = gameEvents.input.explore1;
+       }
+       else if(forestExplore > 9){
+        var ihtemm;
+        if(document.getElementById('silly mode').value == "true"){
+         itemGet("Cuban Cheese", 5);
+         ihtemm = "piece of Cuban Cheese.";
+        }
+        else{
+         itemGet('Health Potion', 2);
+         ihtemm = "Health Potion.";
+        }
+        document.getElementById('story').innerHTML = gameEvents.stories.forest + "<br>You also got a " + ihtemm;
+        document.getElementById('input').innerHTML = gameEvents.input.explore1;
+       }
+       else if(forestExplore > 4 && forestExplore < 10){
+        document.getElementById('story').innerHTML = "You stumble through the forest and discover a cave!";
+        caveFound();
+       }
+      }
+      
+      function caveFound(){
+       document.getElementById('caveFound').value = "true";
+      }
   </script>
  </body>
 </html>
