@@ -45,7 +45,7 @@
     XP: <span id="xpPoints"></span>/<span id="xpTotal">20</span>
   </div>
   </div>
-  <ul class="pagination pagination-info">
+  <ul class="pagination pagination-info" id="leveling">
   <li><a href="#">Level</a></li>
   <li class="disabled" id="lv1"><a href="#">1</a></li>
   <li class="disabled" id="lv2"><a href="#">2</a></li>
@@ -427,6 +427,7 @@
      if(to == "1"){
       localStorage.name1 = document.getElementById('name').value;
       localStorage.forestFound1 = document.getElementById('forestFound').value;
+      localStorage.caveFound1 = document.getElementById('caveFound').value;
       localStorage.hp1 = document.getElementById('hpBar').innerHTML;
       localStorage.hpPercent1 = document.getElementById('hpBar').style.width;
       localStorage.str1 = document.getElementById('str').innerHTML;
@@ -435,7 +436,7 @@
       localStorage.con1 = document.getElementById('con').innerHTML;
       localStorage.dex1 = document.getElementById('dex').innerHTML;
       localStorage.cha1 = document.getElementById('cha').innerHTML;
-      localStorage.level1 = document.getElementById('level').value;
+      localStorage.level1 = document.getElementById('leveling').innerHTML;
       localStorage.inventorySlot1 = document.getElementById('inventory1').value;
       localStorage.inventorySlot2 = document.getElementById('inventory2').value;
       localStorage.inventorySlot3 = document.getElementById('inventory3').value;
@@ -457,6 +458,7 @@
 if(to == "3"){
       localStorage.name3 = document.getElementById('name').value;
       localStorage.forestFound3 = document.getElementById('forestFound').value;
+      localStorage.caveFound3 = document.getElementById('caveFound').value;
       localStorage.hp3 = document.getElementById('hpBar').innerHTML;
       localStorage.hpPercent3 = document.getElementById('hpBar').style.width;
       localStorage.str3 = document.getElementById('str').innerHTML;
@@ -465,7 +467,7 @@ if(to == "3"){
       localStorage.con3 = document.getElementById('con').innerHTML;
       localStorage.dex3 = document.getElementById('dex').innerHTML;
       localStorage.cha3 = document.getElementById('cha').innerHTML;
-      localStorage.level3 = document.getElementById('level').value;
+      localStorage.level3 = document.getElementById('leveling').innerHTML;
       localStorage.inventorySlot13 = document.getElementById('inventory1').value;
       localStorage.inventorySlot23 = document.getElementById('inventory2').value;
       localStorage.inventorySlot33 = document.getElementById('inventory3').value;
@@ -487,6 +489,7 @@ if(to == "3"){
     if(to == "2"){
       localStorage.name2 = document.getElementById('name').value;
       localStorage.forestFound2 = document.getElementById('forestFound').value;
+      localStorage.caveFound2 = document.getElementById('caveFound').value;
       localStorage.hp2 = document.getElementById('hpBar').innerHTML;
       localStorage.hpPercent2 = document.getElementById('hpBar').style.width;
       localStorage.str2 = document.getElementById('str').innerHTML;
@@ -495,7 +498,7 @@ if(to == "3"){
       localStorage.con2 = document.getElementById('con').innerHTML;
       localStorage.dex2 = document.getElementById('dex').innerHTML;
       localStorage.cha2 = document.getElementById('cha').innerHTML;
-      localStorage.level2 = document.getElementById('level').value;
+      localStorage.level2 = document.getElementById('leveling').innerHTML;
       localStorage.inventorySlot12 = document.getElementById('inventory1').value;
       localStorage.inventorySlot22 = document.getElementById('inventory2').value;
       localStorage.inventorySlot32 = document.getElementById('inventory3').value;
@@ -521,6 +524,7 @@ if(to == "3"){
      if(from == "1"){
      document.getElementById('hpBar').innerHTML = localStorage.hp1;
      document.getElementById('forestFound').value = localStorage.forestFound1;
+     document.getElementById('caveFound').value = localStorage.caveFound1;
      document.getElementById('name').value = localStorage.name1;
      document.getElementById('hpBar').style.width = localStorage.hpPercent1;
      document.getElementById('cha').innerHTML = localStorage.cha1;
@@ -529,7 +533,7 @@ if(to == "3"){
      document.getElementById('wis').innerHTML = localStorage.wis1;
      document.getElementById('int').innerHTML = localStorage.int1;
      document.getElementById('str').innerHTML = localStorage.str1;
-     document.getElementById('level').value = localStorage.level1;
+     document.getElementById('leveling').innerHTML = localStorage.level1;
      document.getElementById('inventory1').value = localStorage.inventorySlot1;
      document.getElementById('inventory2').value = localStorage.inventorySlot2;
      document.getElementById('inventory3').value = localStorage.inventorySlot3;
@@ -551,6 +555,7 @@ if(to == "3"){
      if(from == "2"){
      document.getElementById('hpBar').innerHTML = localStorage.hp2;
      document.getElementById('forestFound').value = localStorage.forestFound2;
+     document.getElementById('caveFound').value = localStorage.caveFound2;
      document.getElementById('name').value = localStorage.name2;
      document.getElementById('hpBar').style.width = localStorage.hpPercent2;
      document.getElementById('cha').innerHTML = localStorage.cha2;
@@ -559,7 +564,7 @@ if(to == "3"){
      document.getElementById('wis').innerHTML = localStorage.wis2;
      document.getElementById('int').innerHTML = localStorage.int2;
      document.getElementById('str').innerHTML = localStorage.str2;
-     document.getElementById('level').value = localStorage.level2;
+     document.getElementById('leveling').innerHTML = localStorage.level2;
      document.getElementById('inventory1').value = localStorage.inventorySlot12;
      document.getElementById('inventory2').value = localStorage.inventorySlot22;
      document.getElementById('inventory3').value = localStorage.inventorySlot32;
@@ -581,6 +586,7 @@ if(to == "3"){
      if(from == "3"){
      document.getElementById('hpBar').innerHTML = localStorage.hp3;
      document.getElementById('forestFound').value = localStorage.forestFound3;
+     document.getElementById('caveFound').value = localStorage.caveFound3;
      document.getElementById('name').value = localStorage.name3;
      document.getElementById('hpBar').style.width = localStorage.hpPercent3;
      document.getElementById('cha').innerHTML = localStorage.cha3;
@@ -589,7 +595,7 @@ if(to == "3"){
      document.getElementById('wis').innerHTML = localStorage.wis3;
      document.getElementById('int').innerHTML = localStorage.int3;
      document.getElementById('str').innerHTML = localStorage.str3;
-     document.getElementById('level').value = localStorage.level3;
+     document.getElementById('leveling').innerHTML = localStorage.level3;
      document.getElementById('inventory1').value = localStorage.inventorySlot13;
      document.getElementById('inventory2').value = localStorage.inventorySlot23;
      document.getElementById('inventory3').value = localStorage.inventorySlot33;
@@ -746,13 +752,39 @@ function levelUp(level){
         document.getElementById('input').innerHTML = gameEvents.input.explore1;
        }
        else if(forestExplore > 4 && forestExplore < 10){
+        if(document.getElementById('caveFound').value == "false"){
         document.getElementById('story').innerHTML = "You stumble through the forest and discover a cave!";
         caveFound();
+        }
+       else{
+        document.getElementById('story').innerHTML = "Placeholder!!! <a href='https://supermegadex.github.io/Text-Game/beta.html' class='glyphicon glyphicon-info-sign'></a>";
        }
+        document.getElementById('input').innerHTML = gameEvents.input.explore1;
+      }
       }
       
       function caveFound(){
        document.getElementById('caveFound').value = "true";
+      }
+      
+      function cave(){
+       var caveExplore = Math.random();
+       if(caveExplore <= .25){
+        document.getElementById('story').innerHTML = "cave story 1!";
+        document.getElementById('input').innerHTML = gameEvents.input.explore1;
+       }
+       if(caveExplore >.25 && caveExplore <=.5){
+        document.getElementById('story').innerHTML = "cave story 2!";
+        document.getElementById('input').innerHTML = gameEvents.input.explore1;
+       }
+       if(caveExplore > .5 && caveExplore <=.75){
+        document.getElementById('story').innerHTML = "cave story 2!";
+        document.getElementById('input').innerHTML = gameEvents.input.explore1;
+       }
+       if(caveExplore >.75 && caveExplore <= 1){
+        document.getElementById('story').innerHTML = "Welcome to the dungeon 1";
+        document.getElementById('input').innerHTML = gameEvents.input.explore1 + "<button class='btn btn-primary'>Enter</button>";
+       }
       }
   </script>
  </body>
