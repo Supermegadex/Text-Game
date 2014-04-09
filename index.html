@@ -334,15 +334,14 @@
     }
     function wolfFight(wolfHP, wolfStr){
      var playerStr = document.getElementById('str');
+     document.getElementById('input').innerHTML = gameEvents.input.wolfInput;
       document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
     100\
   </div>';
-     document.getElementById('input').innerHTML = gameEvents.input.wolfInput;
-     
     }
     function  wolfDefeat(){
      main();
-     xp(10);
+     xp(5);
      if(document.getElementById('silly mode').value == "true"){
       itemGet("Cuban Cheese", 2);
      }
@@ -372,13 +371,16 @@
      document.getElementById('enemyHPBar').style.width = newEnemyHP + "%";
      hp(fightStr, "s");
      if(newEnemyHP <= 0){
-      Defeat("wolf");
+      Defeat(victory);
      }
     }
     
     function Defeat(opponent){
      if(opponent == "wolf"){
       wolfDefeat();
+     }
+     if(opponent == "orc"){
+      orcDefeat();
      }
     }
     
@@ -754,12 +756,12 @@ function levelUp(level){
        else if(forestExplore > 4 && forestExplore < 10){
         if(document.getElementById('caveFound').value == "false"){
         document.getElementById('story').innerHTML = "You stumble through the forest and discover a cave!";
+        document.getElementById('input').innerHTML = gameEvents.input.explore1;
         caveFound();
         }
        else{
-        document.getElementById('story').innerHTML = "Placeholder!!! <a href='https://supermegadex.github.io/Text-Game/beta.html' class='glyphicon glyphicon-info-sign'></a>";
+        orcFight();
        }
-        document.getElementById('input').innerHTML = gameEvents.input.explore1;
       }
       }
       
@@ -785,6 +787,19 @@ function levelUp(level){
         document.getElementById('story').innerHTML = "Welcome to the dungeon 1";
         document.getElementById('input').innerHTML = gameEvents.input.explore1 + "<button class='btn btn-primary'>Enter</button>";
        }
+      }
+      function orcFight(){
+       document.getElementById('story').innerHTML = "An orc blocks your path!";
+       document.getElementById('input').innerHTML = "<button onclick='fight(\"Orc\", 50, \"orc\", 20)' class='btn btn-danger'>Fight!</button>";
+      document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
+    100\
+  </div>';
+      }
+      
+      function orcDefeat(){
+       xp(25);
+       itemGet("Cuban Cheese", 1);
+       main();
       }
   </script>
  </body>
