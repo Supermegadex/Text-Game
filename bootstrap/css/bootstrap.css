@@ -271,7 +271,7 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
-  font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-size: 14px;
   line-height: 1.42857143;
   color: #333333;
@@ -286,12 +286,12 @@ textarea {
   line-height: inherit;
 }
 a {
-  color: #5cb85c;
+  color: #428bca;
   text-decoration: none;
 }
 a:hover,
 a:focus {
-  color: #3d8b3d;
+  color: #2a6496;
   text-decoration: underline;
 }
 a:focus {
@@ -500,10 +500,10 @@ cite {
   color: #999999;
 }
 .text-primary {
-  color: #5cb85c;
+  color: #428bca;
 }
 a.text-primary:hover {
-  color: #449d44;
+  color: #3071a9;
 }
 .text-success {
   color: #3c763d;
@@ -531,10 +531,10 @@ a.text-danger:hover {
 }
 .bg-primary {
   color: #fff;
-  background-color: #5cb85c;
+  background-color: #428bca;
 }
 a.bg-primary:hover {
-  background-color: #449d44;
+  background-color: #3071a9;
 }
 .bg-success {
   background-color: #dff0d8;
@@ -688,7 +688,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: 'Ubuntu', sans-serif;
 }
 code {
   padding: 2px 4px;
@@ -1640,7 +1640,7 @@ legend {
   margin-bottom: 20px;
   font-size: 21px;
   line-height: inherit;
-  color: #333333;
+  color: #222222;
   border: 0;
   border-bottom: 1px solid #e5e5e5;
 }
@@ -1694,7 +1694,7 @@ output {
   font-size: 14px;
   line-height: 1.42857143;
   color: #333333;
-  background-color: #555555;
+  background-color: #eeeeee;
   background-image: none;
   border: 1px solid #cccccc;
   border-radius: 4px;
@@ -1710,20 +1710,20 @@ output {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 .form-control::-moz-placeholder {
-  color: #999999;
+  color: #555555;
   opacity: 1;
 }
 .form-control:-ms-input-placeholder {
-  color: #999999;
+  color: #555555;
 }
 .form-control::-webkit-input-placeholder {
-  color: #999999;
+  color: #555555;
 }
 .form-control[disabled],
 .form-control[readonly],
 fieldset[disabled] .form-control {
   cursor: not-allowed;
-  background-color: #eeeeee;
+  background-color: #999999;
   opacity: 1;
 }
 textarea.form-control {
@@ -2079,8 +2079,8 @@ fieldset[disabled] .btn-default.active {
 }
 .btn-primary {
   color: #ffffff;
-  background-color: #5cb85c;
-  border-color: #4cae4c;
+  background-color: #428bca;
+  border-color: #357ebd;
 }
 .btn-primary:hover,
 .btn-primary:focus,
@@ -2088,8 +2088,8 @@ fieldset[disabled] .btn-default.active {
 .btn-primary.active,
 .open .dropdown-toggle.btn-primary {
   color: #ffffff;
-  background-color: #47a447;
-  border-color: #398439;
+  background-color: #3276b1;
+  border-color: #285e8e;
 }
 .btn-primary:active,
 .btn-primary.active,
@@ -2111,11 +2111,11 @@ fieldset[disabled] .btn-primary:active,
 .btn-primary.disabled.active,
 .btn-primary[disabled].active,
 fieldset[disabled] .btn-primary.active {
-  background-color: #5cb85c;
-  border-color: #4cae4c;
+  background-color: #428bca;
+  border-color: #357ebd;
 }
 .btn-primary .badge {
-  color: #5cb85c;
+  color: #428bca;
   background-color: #ffffff;
 }
 .btn-success {
@@ -2283,7 +2283,7 @@ fieldset[disabled] .btn-danger.active {
   background-color: #ffffff;
 }
 .btn-link {
-  color: #5cb85c;
+  color: #428bca;
   font-weight: normal;
   cursor: pointer;
   border-radius: 0;
@@ -2304,7 +2304,7 @@ fieldset[disabled] .btn-link {
 }
 .btn-link:hover,
 .btn-link:focus {
-  color: #3d8b3d;
+  color: #2a6496;
   text-decoration: underline;
   background-color: transparent;
 }
@@ -3054,7 +3054,7 @@ input[type="button"].btn-block {
   color: #ffffff;
   text-decoration: none;
   outline: 0;
-  background-color: #5cb85c;
+  background-color: #428bca;
 }
 .dropdown-menu > .disabled > a,
 .dropdown-menu > .disabled > a:hover,
@@ -3375,7 +3375,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   line-height: 1;
   color: #333333;
   text-align: center;
-  background-color: #eeeeee;
+  background-color: #999999;
   border: 1px solid #cccccc;
   border-radius: 4px;
 }
@@ -3476,7 +3476,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav .open > a:hover,
 .nav .open > a:focus {
   background-color: #eeeeee;
-  border-color: #5cb85c;
+  border-color: #428bca;
 }
 .nav .nav-divider {
   height: 1px;
@@ -3569,7 +3569,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-pills > li.active > a:hover,
 .nav-pills > li.active > a:focus {
   color: #ffffff;
-  background-color: #5cb85c;
+  background-color: #428bca;
 }
 .nav-stacked > li {
   float: none;
@@ -4139,7 +4139,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding: 6px 12px;
   line-height: 1.42857143;
   text-decoration: none;
-  color: #5cb85c;
+  color: #428bca;
   background-color: #ffffff;
   border: 1px solid #dddddd;
   margin-left: -1px;
@@ -4159,7 +4159,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .pagination > li > span:hover,
 .pagination > li > a:focus,
 .pagination > li > span:focus {
-  color: #3d8b3d;
+  color: #2a6496;
   background-color: #eeeeee;
   border-color: #dddddd;
 }
@@ -4171,8 +4171,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .pagination > .active > span:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: #5cb85c;
-  border-color: #5cb85c;
+  background-color: #428bca;
+  border-color: #428bca;
   cursor: default;
 }
 .pagination > .disabled > span,
@@ -4287,11 +4287,11 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   background-color: #808080;
 }
 .label-primary {
-  background-color: #5cb85c;
+  background-color: #428bca;
 }
 .label-primary[href]:hover,
 .label-primary[href]:focus {
-  background-color: #449d44;
+  background-color: #3071a9;
 }
 .label-success {
   background-color: #5cb85c;
@@ -4354,7 +4354,7 @@ a.badge:focus {
 }
 a.list-group-item.active > .badge,
 .nav-pills > .active > a > .badge {
-  color: #5cb85c;
+  color: #428bca;
   background-color: #ffffff;
 }
 .nav-pills > li > a > .badge {
@@ -4414,7 +4414,7 @@ a.list-group-item.active > .badge,
 a.thumbnail:hover,
 a.thumbnail:focus,
 a.thumbnail.active {
-  border-color: #5cb85c;
+  border-color: #428bca;
 }
 .thumbnail .caption {
   padding: 9px;
@@ -4526,7 +4526,7 @@ a.thumbnail.active {
   line-height: 20px;
   color: #ffffff;
   text-align: center;
-  background-color: #5cb85c;
+  background-color: #428bca;
   -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   -webkit-transition: width 0.6s ease;
@@ -4640,8 +4640,8 @@ a.list-group-item.active:hover,
 a.list-group-item.active:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: #5cb85c;
-  border-color: #5cb85c;
+  background-color: #428bca;
+  border-color: #428bca;
 }
 a.list-group-item.active .list-group-item-heading,
 a.list-group-item.active:hover .list-group-item-heading,
@@ -4651,7 +4651,7 @@ a.list-group-item.active:focus .list-group-item-heading {
 a.list-group-item.active .list-group-item-text,
 a.list-group-item.active:hover .list-group-item-text,
 a.list-group-item.active:focus .list-group-item-text {
-  color: #eaf6ea;
+  color: #e1edf7;
 }
 .list-group-item-success {
   color: #3c763d;
@@ -4961,18 +4961,18 @@ a.list-group-item-danger.active:focus {
   border-bottom-color: #dddddd;
 }
 .panel-primary {
-  border-color: #5cb85c;
+  border-color: #428bca;
 }
 .panel-primary > .panel-heading {
   color: #ffffff;
-  background-color: #5cb85c;
-  border-color: #5cb85c;
+  background-color: #428bca;
+  border-color: #428bca;
 }
 .panel-primary > .panel-heading + .panel-collapse .panel-body {
-  border-top-color: #5cb85c;
+  border-top-color: #428bca;
 }
 .panel-primary > .panel-footer + .panel-collapse .panel-body {
-  border-bottom-color: #5cb85c;
+  border-bottom-color: #428bca;
 }
 .panel-success {
   border-color: #d6e9c6;
@@ -5137,8 +5137,8 @@ button.close {
   filter: alpha(opacity=0);
 }
 .modal-backdrop.in {
-  opacity: 0.65;
-  filter: alpha(opacity=65);
+  opacity: 0.45;
+  filter: alpha(opacity=45);
 }
 .modal-header {
   padding: 15px;
@@ -5201,8 +5201,8 @@ button.close {
   filter: alpha(opacity=0);
 }
 .tooltip.in {
-  opacity: 0.75;
-  filter: alpha(opacity=75);
+  opacity: 0.9;
+  filter: alpha(opacity=90);
 }
 .tooltip.top {
   margin-top: -3px;
