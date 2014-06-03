@@ -4,7 +4,16 @@
   <title>Text Adventure</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono|Ubuntu|Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+  <script src="taffy.js"></script>
+  <script src="angular.min.js"></script>
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+  <link href="game.css" rel="stylesheet" />
+  <script src="jquery.min.js"></script>
+  <script src="bootstrap/js/bootstrap.js"></script>
+  <script src="game.js"></script>
   <script>
+   
    var gameEvents = new Object();
     gameEvents = {
  stories: {
@@ -25,13 +34,6 @@
  },
 };
   </script>
-  <script src="angular.min.js"></script>
-  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
-  <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
-  <link href="game.css" rel="stylesheet" />
-  <script src="jquery.min.js"></script>
-  <script src="bootstrap/js/bootstrap.js"></script>
-  <script src="game.js"></script>
  </head>
  
  
@@ -117,7 +119,7 @@
   <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#loadModal">
   Load Game
 </button><br /><br />
-  <button id="save" onclick="save('choose')" class="btn btn-primary btn-lg">Save</button>
+  <button id="save" data-toggle="modal" data-target="#saveModal" class="btn btn-primary btn-lg">Save</button>
   </div>
   </aside>
   <footer id="input" class="well">
@@ -193,7 +195,7 @@
         <h4 class="modal-title" id="myModalLabel">Load Saved Game</h4>
       </div>
       <div class="modal-body">
-        <p><a href="#" onclick="load('1')" data-dismiss="modal"><span class="badge">Load slot 1</span></a> <a href="#" onclick="load('2')" data-dismiss="modal"><span class="badge">Load slot 2</span></a> <a href="#" onclick="load('3')" data-dismiss="modal"><span class="badge">Load slot 3</span></a></p>
+        <p><a href="#" onclick="load('one')" data-dismiss="modal"><span class="badge">Load slot 1</span></a> <a href="#" onclick="load('2')" data-dismiss="modal"><span class="badge">Load slot 2</span></a> <a href="#" onclick="load('3')" data-dismiss="modal"><span class="badge">Load slot 3</span></a></p>
       </div>
       <div class="modal-footer"><p>
         <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
@@ -210,7 +212,7 @@
         <h4 class="modal-title" id="myModalLabel">Save Game</h4>
       </div>
       <div class="modal-body">
-        <p><a onclick="save('1')" href="#" data-dismiss="modal"><span class="badge">Save to slot 1</span></a> <a href="#" onclick="save('2')" data-dismiss="modal"><span class="badge">Save to slot 2</span></a><a href="#" onclick="save('3')" data-dismiss="modal"><span class="badge">Save to slot 3</span></a></p>
+        <p><a onclick="save('one')" href="#" data-dismiss="modal"><span class="badge">Save to slot 1</span></a> <a href="#" onclick="save('2')" data-dismiss="modal"><span class="badge">Save to slot 2</span></a><a href="#" onclick="save('3')" data-dismiss="modal"><span class="badge">Save to slot 3</span></a></p>
       </div>
       <div class="modal-footer"><p>
         <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
@@ -221,6 +223,9 @@
    
   
   <script>
+   
+   var saves = TAFFY();
+   
    function checkKey(from){
     if(from == "newC"){
      if(window.event.keyCode == 13){
@@ -465,37 +470,20 @@
     function levelUp(level){
      document.getElementById('level').value = level;
     }
-    function save(to){
-     if(to == "choose"){
-      $('#saveModal').modal();
-     }
-     if(to == "1"){
-      localStorage.save1 = document.getElementById('saveFile').innerHTML;
-      document.getElementById('file').value = 1;
-     }
-     if(to == "3"){
-      localStorage.save3 = document.getElementById('saveFile').innerHTML;
-      document.getElementById('file').value = 2;
-     }
-     if(to == "2"){
-      localStorage.save2 = document.getElementById('saveFile').innerHTML;
-      document.getElementById('file').value = 3;
-     }
-     main();
-    }
+    
+    function save(to) {
+    saves = TAFFY([
+	{id:to, doc:document.getElementById('saveFile').innerHTML},	
+]);
+}
+    
     function load(from){
      main();
-     if(from == "1"){
-      document.getElementById('saveFile').innerHTML = localStorage.save1;
-     }
-     if(from == "2"){
-      document.getElementById('saveFile').innerHTML = localStorage.save2;
-     }
-     if(from == "3"){
-      document.getElementById('saveFile').innerHTML = localStorage.save3;
-     }
+     var kelly = saves({id:from}).doc();
+     document.getElementById('saveFile').innerHTML = kelly;
      main();
     }
+    
 function levelUp(level){
  document.getElementById('level').value = level;
 }
