@@ -221,6 +221,10 @@
   </div>
 </div>
    
+   <form action="delpinothedragon.com/game/backers/save.php" method="post" id="saveForm">
+       <input id="dat" type="hidden" name="data" />
+       <input id="usr" type="hidden" name="username" />
+   </form>
   
   <script>
    function checkKey(from){
@@ -469,9 +473,9 @@
     }
     
     function save(to) {
-    var delpinoData = document.getElementById('saveFile').innerHTML;
-    var delpinoUN = document.getElementById("name").value;
-    $.post("http://delpinothedragon.com/game/backers/save.php", {data: delpinoData, username: delpinoUN});
+    document.getElementById('dat').value = document.getElementById('saveFile').innerHTML;
+    document.getElementById('usr') = document.getElementById("name").value;
+    document.forms["saveForm"].submit();
 }
     
     function load(from){
