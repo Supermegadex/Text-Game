@@ -223,9 +223,6 @@
    
   
   <script>
-   
-   var saves = TAFFY();
-   
    function checkKey(from){
     if(from == "newC"){
      if(window.event.keyCode == 13){
@@ -472,16 +469,21 @@
     }
     
     function save(to) {
-    saves = TAFFY([
-	{id:to, doc:document.getElementById('saveFile').innerHTML},	
-]);
+    var delpinoData = document.getElementById('saveFile').innerHTML;
+    var delpinoUN = document.getElementById("name").value;
+    $.post("http://delpinothedragon.com/game/backers/save.php", {data: delpinoData, username: delpinoUN});
 }
     
     function load(from){
-     main();
-     var kelly = saves({id:from}).doc();
-     document.getElementById('saveFile').innerHTML = kelly;
-     main();
+   var db = openDatabase('saves', '1.0', 'save game files', 2 * 1024 * 1024);
+     db.transaction(function (tx){
+      tx.executeSql('SELECT * FROM foo', [], function(tx, results){
+       var len = results.rows.length, i;
+       for (i = 0; i< len; i++){
+        console.log(results.rows.item(i).text);
+       }
+      });
+     });
     }
     
 function levelUp(level){
