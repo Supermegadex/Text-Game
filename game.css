@@ -30,3 +30,10 @@ div#story{
 p:first-letter{
  size: (175%);
 }
+.direction{
+    text-align: center;
+    align-self: center;
+    align-content: center;
+    align-items: center;
+    text-align-last: center;
+}
