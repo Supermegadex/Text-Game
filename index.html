@@ -1,850 +1,917 @@
 <!doctype html>
 <html>
- <head>
-  <title>Text Adventure</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono|Ubuntu|Ubuntu+Condensed' rel='stylesheet' type='text/css'>
-  <script src="taffy.js"></script>
-  <script src="angular.min.js"></script>
-  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
-  <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
-  <script src="jquery.min.js"></script>
-  <script src="bootstrap/js/bootstrap.js"></script>
-  <link href="game.css" rel="stylesheet" />
-  <script src="foundation/js/vendor/modernizr.js"></script>
-  <script>
-   
-   var gameEvents = new Object();
-    gameEvents = {
- stories: {
-  hub: ", you are at camp",
-  explore1: "You walk around.",
-  explore2: "You find a forest.",
-  explore3: "You encounter a wolf.",
-  forest: "You explore the forest and find nothing. You do enjoy the fresh air, though.",
- },
- input: {
-  hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button>",
-  explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
-  explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
-  explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
-  wolfInput: "<button onclick='fight(\"Wolf\", 20, \"wolf\", 15)' class='btn btn-danger'>Fight</button> or <button onclick='flee(8)' class='btn btn-warning'>Run</button>",
-  forest: "<button onclick='forest()' class='btn btn-success'>Forest</button>",
-  cave: "<button onclick='cave()' class='btn btn-primary'>Cave</button>",
-  NESW: "<button id='north' onclick='console.log = \"Nope!\"'>North</button><br /><button id='west' onclick='console.log = \"Nope!\"'>West</button><button id='south' onclick='console.log = \"Nope!\"'>South</button><button id='east' onclick='console.log = \"Nope!\"'>East</button>",
-  N: "<button id='north' onclick='console.log = \"Nope!\"'>North</button><br />",
-  E: "<button id='east' onclick='console.log = \"Nope!\"'>East</button>",
-  S: "<button id='south' onclick='console.log = \"Nope!\"'>South</button>",
-  W: "<button id='west' onclick='console.log = \"Nope!\"'>West</button>",
- },
-};
-  </script>
- </head>
- 
- 
- <body ng-app onload="loadModal()">
-  <div id="story" class="well">
-  <div class="jumbotron">
-   <h1>What are you waiting for? Make a new character or load your existing one!</h1>
-  </div>
-  </div>
-  <aside id="stats" class="well">
-  <!-- PJ, this is where you hack!! -->
-  <div id="saveFile">
-  <input type="hidden" id="name" value="">
-  <input type="hidden" id="forestFound" value="false">
-  <input type="hidden" id="caveFound" value="false">
-  <input type="hidden" id="hitPoints">
-  <input type="hidden" id="level" value="">
-  <!-- Here you can change your inventory. Change the value for the name. Name is quantity. -->
-  <input type="hidden" id="inventory1" value="n" name="0" class="" role="">
-  <input type="hidden" id="inventory2" value="n" name="0" class="" role="">
-  <input type="hidden" id="inventory3" value="n" name="0" class="" role="">
-  <input type="hidden" id="inventory4" value="n" name="0" class="" role="">
-  <input type="hidden" id="inventory5" value="n" name="0" class="" role="">
-  <input type="hidden" id="inventory6" value="n" name="0" class="" role="">
-  <!-- value="true" enables silly mode -->
-  <input type="hidden" id="silly mode" value="false">
-  <!-- value is name of weapon, name is strength, class is heavy, light, ranged or fist -->
-  <input type="hidden" id="weapon" value="none" name="0" class="fist">
-  <input type="hidden" id="file" value="?">
-  <!-- Dungeons -->
-  <input type="hidden" value="false" id="caveDFound">
-  HP:<div class="progress progress-striped active" id="hp">
-  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;" id="hpBar">
-    0
-  </div>
-</div>
-  <div class="progress progress-striped active" id="xp">
-  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="" id="xpBar">
-    XP: <span id="xpPoints"></span>/<span id="xpTotal">20</span>
-  </div>
-  </div>
-  <ul class="pagination pagination-info" id="leveling">
-  <li><a href="#">Level</a></li>
-  <li class="disabled" id="lv1"><a href="#">1</a></li>
-  <li class="disabled" id="lv2"><a href="#">2</a></li>
-  <li class="disabled" id="lv3"><a href="#">3</a></li>
-  <li class="disabled" id="lv4"><a href="#">4</a></li>
-  <li class="disabled" id="lv5"><a href="#">5</a></li>
-</ul><br><br>Gold: <span class="label label-warning" id="gold">0</span>
-  <ul class="list-group" id="stats">
-  <li class="list-group-item">
-    <span class="badge" id=str>10</span>
-    Strength
-  </li>
-  <li class="list-group-item">
-   <span class="badge" id=int>10</span>
-   Intelligence
-  </li>
-  <li class="list-group-item">
-   <span class="badge" id=wis>10</span>
-   Wisdom
-  </li>
-  <li class="list-group-item">
-   <span class="badge" id=con>10</span>
-   Constitution
-  </li>
-  <li class="list-group-item">
-   <span class="badge" id=dex>10</span>
-   Dexterity
-  </li>
-  <li class="list-group-item">
-   <span class="badge" id=cha>10</span>
-   Charisma
-  </li>
-  </ul>
-  </div>
-  </aside>
-  <aside id="detail" class="well">
-  <img id="detail-pic" src="data:image/jpeg;base64,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" class="img-responsive img-rounded"/>
-  <div class="progress progress-striped active" id="enemyHP">
-</div>
-  <div style="position: fixed; bottom: 0px; height: 50vh;">
-  <button class="btn btn-primary btn-lg" onclick="createModal()">
-  New Game
-</button>&nbsp;
-  <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#loadModal">
-  Load Game
-</button><br /><br />
-  <button id="save" data-toggle="modal" data-target="#saveModal" class="btn btn-primary btn-lg">Save</button>
-  </div>
-  </aside>
-  <footer id="input" class="well">
-  </footer>
-  
-  <div class="modal fade" id="deathModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">You died!</h4>
-      </div>
-       <ul>
-           <li>
-               Click the button below to respawn.
-           </li>
-           <li>
-               or <a href="#" onclick="autoSave()">save</a> and quit.
-           </li>
-       </ul>
-      </div>
-      <div class="modal-footer"><p>
-        <h3>or</h3> <button type="button" class="btn btn-succeed" data-dismiss="modal" onclick="main()">Respawn</button></p>
-      </div>
-    </div>
-  </div>
-  
-<!-- Modal -->
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">In the Beginning...</h4>
-      </div>
-      <div class="modal-body">
-        <p id="newGameModal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quam nibh, suscipit non elementum sit amet, condimentum eget justo. Nam sed pulvinar dolor, quis tincidunt massa. Nam ac hendrerit risus. Nam pulvinar nisl mauris, id varius ante consequat ut. Donec congue, nunc sed consectetur aliquam, arcu nunc condimentum diam, vitae dignissim orci erat vel libero. Donec quis sagittis nisi, a aliquam dolor. Quisque et leo orci. <br>
-</p>
-   <h3>So, your name is <span id="name-entry">{{name}}</span>?<a onclick="create()" data-dismiss="modal" class="glyphicon glyphicon-ok"></a></h3>
-      What do you focus your talents on?<br>
-      <div class="btn-group" data-toggle="buttons">
-  <label class="btn btn-info btn-sm">
-    <input type="radio" name="talent" id="str-focus"> Bodybuilding
-  </label>
-  <label class="btn btn-info btn-sm">
-    <input type="radio" name="talent" id="int-focus"> Academics
-  </label>
-  <label class="btn btn-info btn-sm">
-    <input type="radio" name="talent" id="wis-focus"> Prayer
-  </label>
-  <label class="btn btn-info btn-sm">
-    <input type="radio" name="talent" id="con-focus"> Endurance
-  </label>
-  <label class="btn btn-info btn-sm">
-    <input type="radio" name="talent" id="dex-focus"> Gymnastics
-  </label>
-  <label class="btn btn-info btn-sm">
-    <input type="radio" name="talent" id="cha-focus"> Making Friends
-  </label>
-</div>
-      </div>
-      <div class="modal-footer">
-        <div class="input-group">
-        <input id="name-entry" type="text" ng-model="name" onkeypress="checkKey('newC')" placeholder="Character Name" class="form-control pull-right" />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-  
-  <div class="modal fade" id="loadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Load Saved Game</h4>
-      </div>
-      <div class="modal-body">
-        <p><a href="#" onclick="load('one')" data-dismiss="modal"><span class="badge">Load slot 1</span></a> <a href="#" onclick="load('2')" data-dismiss="modal"><span class="badge">Load slot 2</span></a> <a href="#" onclick="load('3')" data-dismiss="modal"><span class="badge">Load slot 3</span></a></p>
-      </div>
-      <div class="modal-footer"><p>
-        <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
-      </div>
-    </div>
-  </div>
-</div>
-  
-  <!-- Save -->
-  <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Save Game</h4>
-      </div>
-      <div class="modal-body">
-        <p><a onclick="save('one')" href="#" data-dismiss="modal"><span class="badge">Save to slot 1</span></a> <a href="#" onclick="save('2')" data-dismiss="modal"><span class="badge">Save to slot 2</span></a><a href="#" onclick="save('3')" data-dismiss="modal"><span class="badge">Save to slot 3</span></a></p>
-      </div>
-      <div class="modal-footer"><p>
-        <h3>or</h3> <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button></p>
-      </div>
-    </div>
-  </div>
-</div>
-   
-   <form action="http://delpinothedragon.com/game/backers/save.php" method="post" id="saveForm">
-       <input id="dat" type="hidden" name="data" />
-       <input id="usr" type="hidden" name="username" />
-   </form>
-  
-  <script>
-   function checkKey(from){
-    if(from == "newC"){
-     if(window.event.keyCode == 13){
-      create();
-      $('#createModal').modal('hide');
-     }
-    }
-   }
-   
-   function loadModal(){
-   $('#loadModal').modal();
-   }
-   function create(){
-   
-   if(document.getElementById('str-focus').checked){
-   document.getElementById('str').innerHTML = '15';
-   }
-   else if(document.getElementById('int-focus').checked){
-   document.getElementById('int').innerHTML = '15';
-   }
-   else if(document.getElementById('wis-focus').checked){
-   document.getElementById('wis').innerHTML = '15';
-   }
-   else if(document.getElementById('con-focus').checked){
-   document.getElementById('con').innerHTML = '15';
-   }
-   else if(document.getElementById('dex-focus').checked){
-   document.getElementById('dex').innerHTML = '15';
-   }
-   else if(document.getElementById('cha-focus').checked){
-   document.getElementById('cha').innerHTML = '15';
-   }
-   
-   document.getElementById('newGameModal').innerHTML = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quam nibh, suscipit non elementum sit amet, condimentum eget justo. Nam sed pulvinar dolor, quis tincidunt massa. Nam ac hendrerit risus. Nam pulvinar nisl mauris, id varius ante consequat ut. Donec congue, nunc sed consectetur aliquam, arcu nunc condimentum diam, vitae dignissim orci erat vel libero. Donec quis sagittis nisi, a aliquam dolor. Quisque et leo orci. <br>/";
-   
-   var name = document.getElementById('name-entry').innerHTML;
-   document.getElementById('story').innerHTML = name + ", are you ready?";
-   document.getElementById('name').value = name;
-   document.getElementById('input').innerHTML = "<button class='btn btn-info' type='button' onclick='explore()'>Yes! <i class='fa fa-arrow-circle-o-right'></i></button> <button type='button' onclick='createModal()' class='btn btn-warning'>No. <i class='fa fa-arrow-circle-o-left'></i></button>";
-   document.getElementById('forestFound').value = "false";
-   }
-   function createModal(){
-   $('#createModal').modal();
-   document.getElementById('str').innerHTML = '10';
-   document.getElementById('int').innerHTML = '10';
-   document.getElementById('wis').innerHTML = '10';
-   document.getElementById('con').innerHTML = '10';
-   document.getElementById('dex').innerHTML = '10';
-   document.getElementById('cha').innerHTML = '10';
-   document.getElementById('hpBar').innerHTML = 100;
-   document.getElementById('hpBar').style.width = 100 + "%";
-   }
-   
-   function explore(){
-    var adventure = Math.floor((Math.random()*10)+1);
-    if(adventure < 3){
-     document.getElementById('story').innerHTML = gameEvents.stories.explore1;
-     document.getElementById('input').innerHTML = gameEvents.input.explore1;
-    }
-    if(adventure > 3 && adventure < 7){
-     document.getElementById('story').innerHTML = "You find Health Potion";
-     document.getElementById('input').innerHTML = gameEvents.input.explore1;
-     itemGet("Health Potion", 1);
-    }
-    if(adventure >= 7){
-     var forestFound = document.getElementById('forestFound').value;
-     if(forestFound == "false"){
-      document.getElementById('story').innerHTML = gameEvents.stories.explore2;
-      document.getElementById('input').innerHTML = gameEvents.input.explore2;
-     }
-     else{
-      document.getElementById('story').innerHTML = gameEvents.stories.explore3;
-      document.getElementById('input').innerHTML = gameEvents.input.explore3;
-      document.getElementById('detail-pic').src = "wolf.jpg";
-     }
-    }
-   }
-   
-   function main(){
-     document.getElementById('enemyHP').innerHTML = "";
-     
-     if(document.getElementById('level').value > 1){
-      document.getElementById('lv1').class = "active";
-     }
-     if(document.getElementById('level').value > 2){
-      document.getElementById('lv2').class = "active";
-     }
-     if(document.getElementById('level').value > 3){
-      document.getElementById('lv3').class = "active";
-     }
-     if(document.getElementById('level').value > 4){
-      document.getElementById('lv4').class = "active";
-     }
-     if(document.getElementById('level').value > 5){
-      document.getElementById('lv5').class = "active";
-     }
-     document.getElementById('detail-pic').src = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCACxARwDASIAAhEBAxEB/8QAGgABAQEBAQEBAAAAAAAAAAAAAgMBAAUGB//EACgQAQEBAQEAAQMCBQUAAAAAAAEAAhESAwUGMQSBEzIzQXM0UWFjsv/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APhu3dsutst7aWSCDSYRCYQaSLgkEGhILgkEHBILQkEGBILQtCDOW8kFoQHl3J8u5AOXcny7kE+XcnyxIJpYlRIpBNIpVSKQSSKVEikEki1EikEmLUSDBNs7NIMHdu7ZdB11lpBpMiTIESCwJkGhMLAmEGhILgkEGhILgkEHBILQkEGBby0JBAeXcny3kE+Xcqcs5BPliVEsSCaRSqkUgkkUqJFIJJFKqQSCSQSqkEgkxSokGCbBqMGAWWtkHWkZEDJkSZAiYRJ5gRMIlQg0JhYTINCYWBIINCQXBMIMCQWhIIDy3kgt5AOXcny7kE0ilXkUgkkUqpBIJpBKjFgkkGqwYJpTSqwYJMGowYJsGowYJsZsIMJkCZAyZAnmBlQhmeYGTIkyBZqEM1CBEwiTIEEwsCYQcEguCYQYFvLQlyAcs5U5YkE0ilVIpBJIJVSCQSSDVYMEmDU1Bgm02owYJ6g1NU9QT1BqNNgDCbBgwmUyZBQqZpk8wUzUzTJ5goTIE8wUzPMCpmB5mQKmYHmZDNQgQTCJMINCXLQkEA5YlTliQSSCVdEGCTBqahqCbTamoME9U9VNU9QBptTVNgDTajT1ANU2pqmwDUJ6gwEmUyZBQqFLLUIKFTNIqZYKFTNLNTMFM1M081MwUzUKQ1CCmamaWWplgqTzTzUywUzMKeWoMG8iy7BYBqmz0wYBqmz1T1AGDLUNQDVPU9U9QDUGeqeoBqDJhqAMNSYagDG1isAJlMZjBTLUKWWYwVzUKWWYwVy1M0hnlgtlnmllqZYKjUy0ctQYKjUy0RmMF8sxo5ZjBYZGqQ2+oK+orH1FYNWC3LDTBmmmslprBiwW3TDTAdNPUtMNMB1T0y009MBWCyWnpgKw0yWmsBYtqwWADMaQzGCuWoNEZjBYZ5aQzGC2WeWjlqDBbLMaOWoMFhmNEZjBYag0BmMFhmaoGpGoLmpeqBq31Bb1Y6p+rHUDdRdQdRdQJYLYsFg1aem5YLB2mGm5YaaDNNPTbpgtRi01tWCwZpgtqwWArHt2mHYDIYdtGCozGiMxgsMxojUGC2WY0RmMFstQaAzGguMxoDM1BcZDQGZqosakaomrTUFzV3ql6u9QW9Weqfqz1QUdRdQdRdVDdQWx1B1AlgtiwWg3TBbFgsHLDTcsFqMWC2rBYMWC2rTWDli3LHsB7cMbqCoyGkMhqLjMaAzGgsNQaAzGosMzVEZDQXNTNUDUjUFzUjVA1I1Bc1aaomrTUF/V3qj6t9QV9XeqXq71BT1Y6p+ouoKOouoOouoE6i6i6i6g11F1F1FajVhpsWCwasFsWKwcsFuWCwctnbFsoM7d2N0C7IafbRgsMxoDMYLDM1QGYwXNSNUBmMFjUzVAZGoLmrTVE1I1BY1b6omrTUFvV3ql6t9QU9XeqXq71BT1Z6p+rHUFHUXUHVjqBOououorAnUHViwWBOoOrFvU+P7d+p/L8WPkPj+LJvJrJr5cjx/4g8lYrezr7Y+qArj4OH/fmnv7Z+p5F1n4APz358xXjrFb2H7Z+p955/T9/wA+Y6+2PqeTrn9OH+/8fMR5Hbu3sP2v9UFHHwCPP6+Z5+0/q+jufi+FH+582YrwrrrojrrroESLroGSLroGSLroESLroESuug2266o6266g6666oyxuugyLddBjFuuoCwbroDr8N+r/AE//AEP6X/Dj/wAl10VY/m/e5/F10GP4/az+/wC110GH5tfzddB//9k=";
-       var forest;
-           var cave;
-           var dungeon = dungeonCheck();
-           if(document.getElementById('forestFound').value == "true"){
-           forest = gameEvents.input.forest;
-       }
-       else{
-        forest = "";
-       }
-       if(document.getElementById('caveFound').value == "true"){
-           cave = gameEvents.input.cave;
-       }
-       else{
-        cave = "";
-       }
-       if(dungeon != "dungeons:false"){
-        dungeon = "<button onclick='gtDungeon()' class='btn btn-danger' type='button'>Dungeons</button>";
-       }
-       else{
-        dungeon = "";
-       }
-       document.getElementById('story').innerHTML = document.getElementById('name').value + gameEvents.stories.hub;
-       document.getElementById('input').innerHTML = gameEvents.input.hub + forest + cave + dungeon;
-   }
-   
-   function dungeonCheck(){
-    var cave = document.getElementById('caveDFound').value;
-    if(cave == "true"){
-     cave = "cave:true";
-    }
-    else{
-     cave = "cave:false";
-    }
-    if(cave == "cave:true"){
-     return("dungeons:true," + cave);
-    }
-    else{
-     return("dungeons:false");
-    }
-   }
-   
-   function forestFind(){
-     main();
-     document.getElementById('forestFound').value = "true";
-   }
-   
-   function flee(speed){
-    if (document.getElementById('dex').innerHTML > speed){
-    main();
-    }
-    else{
-     hp(1, 's');
-    }
-   }
-   function hp(hpFact, as){
-     if(as == "a"){
-      var newHP = Number(document.getElementById('hpBar').innerHTML) + hpFact;
-      if(newHP >= 100){
-       newHP = 100;
-      }
-      document.getElementById('hpBar').innerHTML = newHP;
-      document.getElementById('hpBar').style.width = newHP + "%";
-     }
-     if(as == "s"){
-      var hpMod = Math.round(document.getElementById('con').innerHTML * .12);
-      var newHP = Number(document.getElementById('hpBar').innerHTML) - hpFact + hpMod;
-      document.getElementById('hpBar').innerHTML = newHP;
-      document.getElementById('hpBar').style.width = newHP + "%";
-     }
-     if(as == "set"){
-      var newHP = hpFact;
-      document.getElementById('hpBar').innerHTML = newHP;
-      document.getElementById('hpBar').style.width = newHP + "%";
-     }
-     if(document.getElementById('hpBar').innerHTML <= 0){
-      death();
-     }
-    }
-    function wolfFight(wolfHP, wolfStr){
-     var playerStr = document.getElementById('str');
-     document.getElementById('input').innerHTML = gameEvents.input.wolfInput;
-      document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
-    100\
-  </div>';
-    }
-    function  wolfDefeat(){
-     main();
-     xp(5);
-     if(document.getElementById('silly mode').value == "true"){
-      itemGet("Cuban Cheese", 2);
-     }
-    }
-    function fight(name, fightHP, victory, fightStr){
-     var weapon = document.getElementById('weapon').value;
-     var weaponStr = document.getElementById('weapon').name;
-     var weaponClass = document.getElementById('weapon').className;
-     var playerStr = Math.round(document.getElementById('str').innerHTML / fightHP * 10) + weaponStr;
-     var story = "test";
-     if(weaponClass == "fist"){
-      story = "You use your fists to attack the " + name + ". (" + String(playerStr) + ")";
-     }
-      if(weaponClass == "melee"){
-       story = "You run up to attack the " + name + " with your " + weapon + ". (" + String(playerStr) + ")";
-      }
-      if(weaponClass == "heavy"){
-       story = "You swing down your " + weapon + " to wound the " + name + ". (" + String(playerStr) + ")";
-      }
-      if(weaponClass == "ranged"){
-       story = "You shoot the " + name + " with your " + weapon + ". (" + String(playerStr) + ")";
-      }
-      story += "<br /> The " + name + " attacks! (" + fightStr + ") But your dexterity lessens the blow.";
-     document.getElementById('story').innerHTML = story;
-     var currentEnemyHP = document.getElementById('enemyHPBar').innerHTML;
-     var newEnemyHP = currentEnemyHP - playerStr;
-     document.getElementById('enemyHPBar').innerHTML = newEnemyHP;
-     document.getElementById('enemyHPBar').style.width = newEnemyHP + "%";
-     fightStr = fightStr - document.getElementById('dex').innerHTML;
-     hp(fightStr, "s");
-     if(newEnemyHP <= 0){
-      Defeat(victory);
-     }
-    }
-    
-    function Defeat(opponent){
-     if(opponent == "wolf"){
-      wolfDefeat();
-     }
-     if(opponent == "orc"){
-      orcDefeat();
-     }
-     if(opponent == "ogre"){
-      ogreDefeat();
-     }
-    }
-    
-    function ogreDefeat(){
-     itemGet("Health Potion", 5)
-     main();
-    }
-    
-    function xp(points){
-     var currentXP = Number(document.getElementById('xpPoints').innerHTML);
-     var level = Number(document.getElementById('xpTotal').innerHTML);
-     var newXP = currentXP + points;
-     var percent = newXP / level * 100;
-     
-     if(percent >= 100){
-      if(document.getElementById('lv1').className == "disabled"){
-       document.getElementById('lv1').className = "active";
-       levelUp(1);
-      }
-      else if(document.getElementById('lv2').className == "disabled"){
-       document.getElementById('lv2').className = "active";
-       levelUp(2);
-      }
-      else if(document.getElementById('lv3').className == "disabled"){
-       document.getElementById('lv3').className = "active";
-       levelUp(3);
-      }
-      else if(document.getElementById('lv4').className == "disabled"){
-       document.getElementById('lv4').className = "active";
-       levelUp(4);
-      }
-      else if(document.getElementById('lv5').className == "disabled"){
-       document.getElementById('lv5').className = "active";
-       levelUp(5);
-      }
-      percent = 0;
-      newXP = 0;
-      var newXPTotal = document.getElementById('con').innerHTML / 5;
-      document.getElementById('xpTotal').innerHTML = level + newXPTotal;
-     }
-     document.getElementById('xpPoints').innerHTML = newXP;
-     document.getElementById('xpBar').style.width = percent + "%";
-    }
-    function levelUp(level){
-     document.getElementById('level').value = level;
-    }
-    
-    function save(to) {
-    if(to == "server"){
-     document.getElementById('dat').value = document.getElementById('saveFile').innerHTML;
-     document.getElementById('usr').value = document.getElementById("name").value;
-     document.forms["saveForm"].submit();
-    }
-    if(to == "one"){
-     localStorage.delpinoData1 = document.getElementById('saveFile').innerHTML;
-    }
-    if(to == "two"){
-     localStorage.delpinoData2 = document.getElementById('saveFile').innerHTML;
-    }
-    if(to == "three"){
-     localStorage.delpinoData3 = document.getElementById('saveFile').innerHTML;
-    }
-}
-    
-    function load(from){
-    main();
-    if(from == "one"){
-     document.getElementById('saveFile').innerHTML = localStorage.delpinoData1;
-    }
-    if(from == "two"){
-     document.getElementById('saveFile').innerHTML = localStorage.delpinoData2;
-    }
-    if(from == "three"){
-     document.getElementById('saveFile').innerHTML = localStorage.delpinoData3;
-    }
-    main();
-    }
-    
-function levelUp(level){
- document.getElementById('level').value = level;
-}
-  
-  function inventory(){
-   if(document.getElementById('inventory1').value == "n"){
-    var inventory1 = "<button class='btn btn-warning'>None</button>";
-   }
-   else{
-    var inventory1 = "<button onclick='useItem(\"1\")' class='btn btn-warning'>" + document.getElementById('inventory1').value+ " <span class='badge'>" + document.getElementById('inventory1').name + "</span></button>";
-   }
-   if(document.getElementById('inventory2').value == "n"){
-    var inventory2 = "<button class='btn btn-warning'>None</button>";
-   }
-   else{
-    var inventory2 = "<button onclick='useItem(\"2\")' class='btn btn-warning'>" + document.getElementById('inventory2').value+ " <span class='badge'>" + document.getElementById('inventory2').name + "</span></button>";
-   }
-   if(document.getElementById('inventory3').value == "n"){
-    var inventory3 = "<button class='btn btn-warning'>None</button>";
-   }
-   else{
-    var inventory3 = "<button onclick='useItem(\"3\")' class='btn btn-warning'>" + document.getElementById('inventory3').value+ " <span class='badge'>" + document.getElementById('inventory3').name + "</span></button>";
-   }
-   if(document.getElementById('inventory4').value == "n"){
-    var inventory4 = "<button class='btn btn-warning'>None</button>";
-   }
-   else{
-    var inventory4 = "<button onclick='useItem(\"4\")' class='btn btn-warning'>" + document.getElementById('inventory4').value+ " <span class='badge'>" + document.getElementById('inventory4').name + "</span></button>";
-   }
-   if(document.getElementById('inventory5').value == "n"){
-    var inventory5 = "<button class='btn btn-warning'>None</button>";
-   }
-   else{
-    var inventory5 = "<button onclick='useItem(\"5\")' class='btn btn-warning'>" + document.getElementById('inventory5').value+ " <span class='badge'>" + document.getElementById('inventory5').name + "</span></button>";
-   }
-   
-   if(document.getElementById('inventory6').value == "n"){
-    var inventory6 = "<button class='btn btn-warning'>None</button>";
-   }
-   else{
-    var inventory6 = "<button onclick='useItem(\"6\")' class='btn btn-warning'>" + document.getElementById('inventory6').value+ " <span class='badge'>" + document.getElementById('inventory6').name + "</span></button>";
-   }
-   document.getElementById('story').innerHTML = inventory1 + " " + inventory2 + " " + inventory3 + " " + inventory4 + " " + inventory5 + " " + inventory6;
-  }
-  
-  function itemGet(item, quantity){
-   var inventory1i = document.getElementById('inventory1').value;
-   var inventory1q = document.getElementById('inventory1').name;
-   var inventory2i = document.getElementById('inventory2').value;
-   var inventory2q = document.getElementById('inventory2').name;
-   var inventory3i = document.getElementById('inventory3').value;
-   var inventory3q = document.getElementById('inventory3').name;
-   var inventory4i = document.getElementById('inventory4').value;
-   var inventory4q = document.getElementById('inventory4').name;
-   if(inventory1i == "n" || inventory1i == item){
-    document.getElementById('inventory1').value = item;
-    if(inventory1i == item){
-     document.getElementById('inventory1').name = Number(document.getElementById('inventory1').name) + Number(quantity);
-    }
-    else{
-     document.getElementById('inventory1').name = quantity;
-    }
-   }
-   else if(inventory2i == "n" || inventory2i == item){
-    document.getElementById('inventory2').value = item;
-    if(inventory1i == item){
-     document.getElementById('inventory2').name = Number(document.getElementById('inventory2').name) + Number(quantity);
-    }
-    else{
-     document.getElementById('inventory2').name = quantity;
-    }
-   }
-   else if(inventory3i == "n" || inventory3i == item){
-    document.getElementById('inventory3').value = item;
-    if(inventory1i == item){
-     document.getElementById('inventory3').name = Number(document.getElementById('inventory3').name) + Number(quantity);
-    }
-    else{
-     document.getElementById('inventory3').name = quantity;
-    }
-   }
-    else if(inventory4i == "n" || inventory4i == item){
-    document.getElementById('inventory4').value = item;
-    if(inventory1i == item){
-     document.getElementById('inventory4').name = Number(document.getElementById('inventory4').name) + Number(quantity);
-    }
-    else{
-     document.getElementById('inventory4').name = quantity;
-    }
-   }
-  }
-  function useItem(slot){
-    var iSlot = "inventory" + slot;
-    var item = document.getElementById(iSlot).value;
-      
-    var newQuantity = Number(document.getElementById(iSlot).name) - 1;
-    document.getElementById(iSlot).name = newQuantity;
-    
-    if(document.getElementById(iSlot).role == "weapon" ){
-     document.getElementById(iSlot).name = 0;
-     var name = document.getElementById(iSlot).value;
-     var str = document.getElementById(iSlot).name;
-     var className = document.getElementById(iSlot).className;
-     document.getElementById(iSlot).role = "item";
-     weaponEquip(name, str, className);
-    }
-    else{
-     itemEffect(item);
-    }
-    if(document.getElementById(iSlot).name == "0" || document.getElementById(iSlot).role == "weapon"){
-     document.getElementById(iSlot).value = "n";
-     document.getElementById(iSlot).className = "";
-     inventory();
-    }
-  }
-  
-  function weaponEquip(name, str, className){
-   document.getElementById('weapon').value = name;
-   document.getElementById('weapon').name = str;
-   document.getElementById('weapon').className = className;
-  }
-  
-  function itemEffect(item){
-   if(item == "Health Potion"){
-    hp(20, "a");
-   }
-   if(item == "Cuban Cheese"){
-    document.getElementById('dex').innerHTML--;
-    document.getElementById('str').innerHTML++;
-   }
-   inventory();
-  }
-      function forest(){
-       var forestExplore = Math.floor((Math.random()*10)+1);
-       if(forestExplore <= 4){
-        document.getElementById('story').innerHTML = gameEvents.stories.forest;
-        document.getElementById('input').innerHTML = gameEvents.input.explore1;
-       }
-       else if(forestExplore > 9){
-        var ihtemm;
-        if(document.getElementById('silly mode').value == "true"){
-         itemGet("Cuban Cheese", 5);
-         ihtemm = "piece of Cuban Cheese.";
-        }
-        else{
-         itemGet('Health Potion', 2);
-         ihtemm = "Health Potion.";
-        }
-        document.getElementById('story').innerHTML = gameEvents.stories.forest + "<br>You also got a " + ihtemm;
-        document.getElementById('input').innerHTML = gameEvents.input.explore1;
-       }
-       else if(forestExplore > 4 && forestExplore < 10){
-        if(document.getElementById('caveFound').value == "false"){
-        document.getElementById('story').innerHTML = "You stumble through the forest and discover a cave!";
-        document.getElementById('input').innerHTML = gameEvents.input.explore1;
-        caveFound();
-        }
-       else{
-        orcFight();
-       }
-      }
-      }
-      
-      function caveFound(){
-       document.getElementById('caveFound').value = "true";
-      }
-      
-      function cave(){
-       var caveExplore = Math.random();
-       if(caveExplore <= .25){
-        document.getElementById('story').innerHTML = "cave story 1!";
-        document.getElementById('input').innerHTML = gameEvents.input.explore1;
-       }
-       if(caveExplore >.25 && caveExplore <=.5){
-        document.getElementById('story').innerHTML = "cave story 2!";
-        document.getElementById('input').innerHTML = gameEvents.input.explore1;
-       }
-       if(caveExplore > .5 && caveExplore <=.75){
-        if(document.getElementById('weapon').value == "Beautiful Short Sword"){
-         document.getElementById('story').innerHTML = "cave story 3";
-        }
-        else{
-        document.getElementById('story').innerHTML = "You found a beautiful Short Sword!";
-        weaponGet("Beautiful Short Sword", 4, "melee");
-        }
-        document.getElementById('input').innerHTML = gameEvents.input.explore1;
-       }
-       if(caveExplore >.75 && caveExplore <= 1){
-        dungeonFind('cave');
-        document.getElementById('story').innerHTML = "Welcome to the dungeon 1";
-        document.getElementById('input').innerHTML = "<button class='btn btn-primary' onclick='caveDungeon(\"1\")'>Enter</button> | <button onclick='main()' class='btn btn-default'>Leave</button>";
-       }
-      }
-      function orcFight(){
-      document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
-    100\
-  </div>';
-       document.getElementById('story').innerHTML = "An orc blocks your path!";
-       document.getElementById('input').innerHTML = "<button onclick='fight(\"Orc\", 90, \"orc\", 18)' class='btn btn-danger'>Fight!</button>";
-      }
-      
-      function orcDefeat(){
-       xp(25);
-       itemGet("Cuban Cheese", 1);
-       main();
-      }
-      
-      function death(){
-       $('#deathModal').modal();
-       main();
-       hp(100, "set");
-      }
-      
-      function autoSave(on){
-       var i = 1;
-       if(on == true){
-        i = 10;
-       }
-       while(i > 3){
-       if(document.getElementById('file').value == 1){
-        save(1);
-       }
-       if(document.getElementById('file').value == 2){
-        save(2);
-       }
-       if(document.getElementById('file').value == 3){
-        save(3);
-       }
-       i++;
-       }
-      }
-      
-      function weaponGet(item, str, className){
-   var inventory1i = document.getElementById('inventory1').value;
-   var inventory1q = document.getElementById('inventory1').name;
-   var inventory2i = document.getElementById('inventory2').value;
-   var inventory2q = document.getElementById('inventory2').name;
-   var inventory3i = document.getElementById('inventory3').value;
-   var inventory3q = document.getElementById('inventory3').name;
-   var inventory4i = document.getElementById('inventory4').value;
-   var inventory4q = document.getElementById('inventory4').name;
-   if(inventory1i == "n"){
-    document.getElementById('inventory1').value = item;
-    document.getElementById('inventory1').name = str;
-    document.getElementById('inventory1').className = className;
-    document.getElementById('inventory1').role = "weapon";
-   }
-   else if(inventory2i == "n"){
-    document.getElementById('inventory2').value = item;
-    document.getElementById('inventory2').name = str;
-    document.getElementById('inventory2').className = className;
-    document.getElementById('inventory2').role = "weapon";
-   }
-   else if(inventory3i == "n"){
-    document.getElementById('inventory3').value = item;
-    document.getElementById('inventory3').name = str;
-    document.getElementById('inventory3').className = className;
-    document.getElementById('inventory3').role = "weapon";
-   }
-    else if(inventory4i == "n"){
-    document.getElementById('inventory4').value = item;
-    document.getElementById('inventory4').name = str;
-    document.getElementById('inventory4').className = className;
-    document.getElementById('inventory4').role = "weapon";
-   }
-  }
-    
-    function dungeonFind(dungeon){
-     document.getElementById(dungeon + "DFound").value = "true";
-    }
-    
-    function caveDungeon(room){
-     if(room == 1){
-      document.getElementById('input').innerHTML = "<button id='north' onclick='caveDungeon(\"2\")' type='button' class='btn btn-default direction'>North</button><br /><button id='west' onclick='caveDungeon(\"4\")' type='button' class='btn btn-default direction'>West</button><button id='south' onclick='caveDungeon(\"3\")' type='button' class='btn btn-default direction'>South</button><button id='east' onclick='main()' type='button' class='btn btn-warning direction'>Back <i class='fa fa-arrow-circle-o-down'></button>";
-      document.getElementById('story').innerHTML = "You make your way into the (hopefully) abandoned lair.";
-     }
-     if(room == 2){
-      document.getElementById('input').innerHTML = "<button id='west' onclick='nextroomcave(\"5\")' type='button' class='btn btn-default direction'>West</button><button id='south' onclick='nextroomcave(\"1\")' type='button' class='btn btn-default direction'>South</button>";
-      document.getElementById('story').innerHTML = "You venture North through the dungeon.<br /> There is a treasure chest in the corner of this room";
-     }
-     if(room == 3){
-      document.getElementById('input').innerHTML = "<button id='north' onclick='caveDungeon(\"1\")' type='button' class='btn btn-default direction'>North</button><br /><button id='west' onclick='caveDungeon(\"6\")' type='button' class='btn btn-default direction'>West</button><button id='east' onclick='caveDungeon(\"7\")' type='button' class='btn btn-default direction'>East</button>";
-      document.getElementById('story').innerHTML = "As you make your way into the room, you smell something gross. You think that there is an ogre nearby.";
-     }
-     if(room == 7){
-      document.getElementById('input').innerHTML = "<button class='btn-btn-danger' onclick='fight(\"ogre\", 55, \"ogre\", 32);' type='button'>Attack</button>|<button class='btn btn-warning' onclick='flee(15)'>Flee</button>";
-      document.getElementById('story').innerHTML = "Your nose was right! You have to fight an ogre!";
-      document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
-    100\
-  </div>';
-     }
-    }
-    
-    function nextroomcave(room){
-     caveDungeon(room);
-    }
-    
-    function gtDungeon(){
-     if(dungeonCheck() == "dungeons:true,cave:true"){
-      document.getElementById('input').innerHTML = "<button type='button' onclick='caveDungeon(\"1\")' class='btn btn-success'>Cave</button>";
-     }
-    }
+
+<head>
+    <title>Text Adventure</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono|Ubuntu|Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+    <script src="taffy.js"></script>
+    <script src="angular.min.js"></script>
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <script src="jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <link href="game.css" rel="stylesheet" />
+    <script src="foundation/js/vendor/modernizr.js"></script>
+    <script>
+        var gameEvents = new Object();
+        gameEvents = {
+            stories: {
+                hub: ", you are at camp",
+                explore1: "You walk around.",
+                explore2: "You find a forest.",
+                explore3: "You encounter a wolf.",
+                forest: "You explore the forest and find nothing. You do enjoy the fresh air, though.",
+            },
+            input: {
+                hub: "<button type='button' class='btn btn-info' onclick='explore()'>Explore <i class='fa fa-arrow-circle-o-right'></i></button><button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button>",
+                explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+                explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
+                explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
+                wolfInput: "<button onclick='fight(\"Wolf\", 20, \"wolf\", 15)' class='btn btn-danger'>Fight</button> or <button onclick='flee(8)' class='btn btn-warning'>Run</button>",
+                forest: "<button onclick='forest()' class='btn btn-success'>Forest</button>",
+                cave: "<button onclick='cave()' class='btn btn-primary'>Cave</button>",
+                NESW: "<button id='north' onclick='console.log = \"Nope!\"'>North</button><br /><button id='west' onclick='console.log = \"Nope!\"'>West</button><button id='south' onclick='console.log = \"Nope!\"'>South</button><button id='east' onclick='console.log = \"Nope!\"'>East</button>",
+                N: "<button id='north' onclick='console.log = \"Nope!\"'>North</button><br />",
+                E: "<button id='east' onclick='console.log = \"Nope!\"'>East</button>",
+                S: "<button id='south' onclick='console.log = \"Nope!\"'>South</button>",
+                W: "<button id='west' onclick='console.log = \"Nope!\"'>West</button>",
+            },
+        };
     </script>
- </body>
+</head>
+
+
+<body ng-app onload="loadModal()">
+    <div id="story" class="well">
+        <div class="jumbotron">
+            <h1>What are you waiting for? Make a new character or load your existing one!</h1>
+        </div>
+    </div>
+    <aside id="stats" class="well">
+        <!-- PJ, this is where you hack!! -->
+        <div id="saveFile">
+            <input type="hidden" id="forestFound" value="false">
+            <input type="hidden" id="caveFound" value="false">
+            <input type="hidden" id="hitPoints">
+            <input type="hidden" id="level" value="">
+            <!-- Here you can change your inventory. Change the value for the name. Name is quantity. -->
+            <input type="hidden" id="inventory1" value="n" name="0" class="" role="">
+            <input type="hidden" id="inventory2" value="n" name="0" class="" role="">
+            <input type="hidden" id="inventory3" value="n" name="0" class="" role="">
+            <input type="hidden" id="inventory4" value="n" name="0" class="" role="">
+            <input type="hidden" id="inventory5" value="n" name="0" class="" role="">
+            <input type="hidden" id="inventory6" value="n" name="0" class="" role="">
+            <!-- value="true" enables silly mode -->
+            <input type="hidden" id="silly mode" value="false">
+            <!-- value is name of weapon, name is strength, class is heavy, light, ranged or fist -->
+            <input type="hidden" id="weapon" value="none" name="0" class="fist">
+            <input type="hidden" id="file" value="?">
+            <!-- Dungeons -->
+            <input type="hidden" value="false" id="caveDFound">
+            <h1 id="name"></h1>
+            HP:
+            <div class="progress progress-striped active" id="hp">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;" id="hpBar">
+                    0
+                </div>
+            </div>
+            <div class="progress progress-striped active" id="xp">
+                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="" id="xpBar">
+                    XP: <span id="xpPoints"></span>/<span id="xpTotal">20</span>
+                </div>
+            </div>
+            <ul class="pagination pagination-info" id="leveling">
+                <li><a href="#">Level</a>
+                </li>
+                <li class="disabled" id="lv1"><a href="#">1</a>
+                </li>
+                <li class="disabled" id="lv2"><a href="#">2</a>
+                </li>
+                <li class="disabled" id="lv3"><a href="#">3</a>
+                </li>
+                <li class="disabled" id="lv4"><a href="#">4</a>
+                </li>
+                <li class="disabled" id="lv5"><a href="#">5</a>
+                </li>
+            </ul>
+            <br>
+            <br>Gold: <span class="label label-warning" id="gold">0</span>
+            <ul class="list-group" id="stats">
+                <li class="list-group-item">
+                    <span class="badge" id=str>10</span>
+                    Strength
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id=int>10</span>
+                    Intelligence
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id=wis>10</span>
+                    Wisdom
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id=con>10</span>
+                    Constitution
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id=dex>10</span>
+                    Dexterity
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id=cha>10</span>
+                    Charisma
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <aside id="detail" class="well">
+        <img id="detail-pic" src="data:image/jpeg;base64,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" class="img-responsive img-rounded" />
+        <div class="progress progress-striped active" id="enemyHP">
+        </div>
+        <div style="position: fixed; bottom: 0px; height: 50vh;">
+            <button class="btn btn-primary btn-lg" onclick="createModal()">
+                New Game
+            </button>&nbsp;
+            <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#loadModal">
+                Load Game
+            </button>
+            <br />
+            <br />
+            <button id="save" data-toggle="modal" data-target="#saveModal" class="btn btn-primary btn-lg">Save</button>
+        </div>
+    </aside>
+    <footer id="input" class="well">
+    </footer>
+
+    <div class="modal fade" id="deathModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">You died!</h4>
+                </div>
+                <ul>
+                    <li>
+                        Click the button below to respawn.
+                    </li>
+                    <li>
+                        or <a href="#" onclick="autoSave()">save</a> and quit.
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <p>
+                    <h3>or</h3> 
+                    <button type="button" class="btn btn-succeed" data-dismiss="modal" onclick="main()">Respawn</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">In the Beginning...</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="newGameModal">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quam nibh, suscipit non elementum sit amet, condimentum eget justo. Nam sed pulvinar dolor, quis tincidunt massa. Nam ac hendrerit risus. Nam pulvinar nisl mauris, id varius ante consequat ut. Donec congue, nunc sed consectetur aliquam, arcu nunc condimentum diam, vitae dignissim orci erat vel libero. Donec quis sagittis nisi, a aliquam dolor. Quisque et leo orci.
+                        <br>
+                    </p>
+                    <h3>So, your name is <span id="name-entry">{{name}}</span>?<a onclick="create()" data-dismiss="modal" class="glyphicon glyphicon-ok"></a></h3>
+                    What do you focus your talents on?
+                    <br>
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-info btn-sm">
+                            <input type="radio" name="talent" id="str-focus">Bodybuilding
+                        </label>
+                        <label class="btn btn-info btn-sm">
+                            <input type="radio" name="talent" id="int-focus">Academics
+                        </label>
+                        <label class="btn btn-info btn-sm">
+                            <input type="radio" name="talent" id="wis-focus">Prayer
+                        </label>
+                        <label class="btn btn-info btn-sm">
+                            <input type="radio" name="talent" id="con-focus">Endurance
+                        </label>
+                        <label class="btn btn-info btn-sm">
+                            <input type="radio" name="talent" id="dex-focus">Gymnastics
+                        </label>
+                        <label class="btn btn-info btn-sm">
+                            <input type="radio" name="talent" id="cha-focus">Making Friends
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="input-group">
+                        <input id="name-entry" type="text" ng-model="name" onkeypress="checkKey('newC')" placeholder="Character Name" class="form-control pull-right" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Load Saved Game</h4>
+                </div>
+                <div class="modal-body">
+                    <p><a href="#" onclick="load('one')" data-dismiss="modal"><span class="badge">Load slot 1</span></a>  <a href="#" onclick="load('2')" data-dismiss="modal"><span class="badge">Load slot 2</span></a>  <a href="#" onclick="load('3')" data-dismiss="modal"><span class="badge">Load slot 3</span></a>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <p>
+                        <h3>or</h3> 
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save -->
+    <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Save Game</h4>
+                </div>
+                <div class="modal-body">
+                    <p><a onclick="save('one')" href="#" data-dismiss="modal"><span class="badge">Save to slot 1</span></a>  <a href="#" onclick="save('2')" data-dismiss="modal"><span class="badge">Save to slot 2</span></a><a href="#" onclick="save('3')" data-dismiss="modal"><span class="badge">Save to slot 3</span></a>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <p>
+                        <h3>or</h3> 
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createModal()">Create Character</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form action="http://delpinothedragon.com/game/backers/save.php" method="post" id="saveForm">
+        <input id="dat" type="hidden" name="data" />
+        <input id="usr" type="hidden" name="username" />
+    </form>
+
+    <script>
+        var data = {
+            name: "ABC123!@#$%^&*()'",
+            personality: 0,
+            str: 10,
+            int: 10,
+            wis: 10,
+            dex: 10,
+            con: 10,
+            cha: 10,
+            curHp: 100,
+            maxHp: 100,
+            gear: {
+                weapon: {
+                    name: "fist",
+                    damage: 0,
+                    class: 0,
+                },
+                upper: {
+                    name: "T-shirt",
+                    defense: 0,
+                },
+                lower: {
+                    name: "T-shirt",
+                    defense: 0,
+                },
+                hat: "",
+                boots: "",
+                gloves: "",
+            },
+            bag: [
+                {
+                    name: "Health Potion",
+                    q: 2,
+                    type: "item",
+                },
+                {
+                    name: "",
+                    q: 0,
+                    type: "item",
+                },
+                {
+                    name: "",
+                    q: 0,
+                    type: "item",
+                },
+                {
+                    name: "",
+                    q: 0,
+                    type: "item",
+                },
+                {
+                    name: "",
+                    q: 0,
+                    type: "item",
+                },
+                {
+                    name: "",
+                    q: 0,
+                    type: "item",
+                }
+          ],
+            hairColor: "copper",
+        };
+
+        Object.observe(data, function (changes) {
+
+            changes.forEach(function (change) {
+
+                document.getElementById('name').innerHTML = data.name;
+                document.getElementById('str').innerHTML = data.str;
+                document.getElementById('int').innerHTML = data.int;
+                document.getElementById('wis').innerHTML = data.wis;
+                document.getElementById('con').innerHTML = data.con;
+                document.getElementById('dex').innerHTML = data.dex;
+                document.getElementById('cha').innerHTML = data.cha;
+                document.getElementById('hpBar').innerHTML = data.curHp;
+                document.getElementById('hpBar').style.width = ((data.curHp / data.maxHp) * 100) + "%";
+
+                console.log(change.type, change.name, change.oldValue);
+            });
+
+        });
+
+        var story = document.getElementById('story');
+        var input = document.getElementById('input');
+
+        function checkKey(from) {
+            if (from == "newC") {
+                if (window.event.keyCode == 13) {
+                    create();
+                    $('#createModal').modal('hide');
+                }
+            }
+        }
+
+        function loadModal() {
+            $('#loadModal').modal();
+        }
+
+        function create() {
+
+            if (document.getElementById('str-focus').checked) {
+                data.str = 15;
+            } else if (document.getElementById('int-focus').checked) {
+                data.int = 15;
+            } else if (document.getElementById('wis-focus').checked) {
+                data.wis = 15;
+            } else if (document.getElementById('con-focus').checked) {
+                data.con = 15;
+            } else if (document.getElementById('dex-focus').checked) {
+                data.dex = 15;
+            } else if (document.getElementById('cha-focus').checked) {
+                data.cha = 15;
+            }
+
+            document.getElementById('newGameModal').innerHTML = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quam nibh, suscipit non elementum sit amet, condimentum eget justo. Nam sed pulvinar dolor, quis tincidunt massa. Nam ac hendrerit risus. Nam pulvinar nisl mauris, id varius ante consequat ut. Donec congue, nunc sed consectetur aliquam, arcu nunc condimentum diam, vitae dignissim orci erat vel libero. Donec quis sagittis nisi, a aliquam dolor. Quisque et leo orci. <br>/";
+
+            var name = document.getElementById('name-entry').innerHTML;
+            document.getElementById('story').innerHTML = name + ", are you ready?";
+            data.name = name;
+            document.getElementById('input').innerHTML = "<button class='btn btn-info' type='button' onclick='explore()'>Yes! <i class='fa fa-arrow-circle-o-right'></i></button> <button type='button' onclick='createModal()' class='btn btn-warning'>No. <i class='fa fa-arrow-circle-o-left'></i></button>";
+            document.getElementById('forestFound').value = "false";
+        }
+
+        function createModal() {
+            $('#createModal').modal();
+            data.str = '10';
+            data.int = '10';
+            data.wis = '10';
+            data.con = '10';
+            data.dex = '10';
+            document.getElementById('cha').innerHTML = '10';
+            data.curHp = 100;
+        }
+
+        function explore() {
+            var adventure = Math.floor((Math.random() * 10) + 1);
+            if (adventure < 3) {
+                document.getElementById('story').innerHTML = gameEvents.stories.explore1;
+                document.getElementById('input').innerHTML = gameEvents.input.explore1;
+            }
+            if (adventure > 3 && adventure < 7) {
+                story.innerHTML = "You find Health Potion";
+                input.innerHTML = gameEvents.input.explore1;
+                itemGet("Health Potion", 1);
+            }
+            if (adventure >= 7) {
+                var forestFound = document.getElementById('forestFound').value;
+                if (forestFound == "false") {
+                    document.getElementById('story').innerHTML = gameEvents.stories.explore2;
+                    document.getElementById('input').innerHTML = gameEvents.input.explore2;
+                } else {
+                    document.getElementById('story').innerHTML = gameEvents.stories.explore3;
+                    document.getElementById('input').innerHTML = gameEvents.input.explore3;
+                    document.getElementById('detail-pic').src = "wolf.jpg";
+                }
+            }
+        }
+
+        function main() {
+            document.getElementById('enemyHP').innerHTML = "";
+
+            if (document.getElementById('level').value > 1) {
+                document.getElementById('lv1').class = "active";
+            }
+            if (document.getElementById('level').value > 2) {
+                document.getElementById('lv2').class = "active";
+            }
+            if (document.getElementById('level').value > 3) {
+                document.getElementById('lv3').class = "active";
+            }
+            if (document.getElementById('level').value > 4) {
+                document.getElementById('lv4').class = "active";
+            }
+            if (document.getElementById('level').value > 5) {
+                document.getElementById('lv5').class = "active";
+            }
+            document.getElementById('detail-pic').src = "data:image/jpeg;base64,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";
+            var forest;
+            var cave;
+            var dungeon = dungeonCheck();
+            if (document.getElementById('forestFound').value == "true") {
+                forest = gameEvents.input.forest;
+            } else {
+                forest = "";
+            }
+            if (document.getElementById('caveFound').value == "true") {
+                cave = gameEvents.input.cave;
+            } else {
+                cave = "";
+            }
+            if (dungeon != "dungeons:false") {
+                dungeon = "<button onclick='gtDungeon()' class='btn btn-danger' type='button'>Dungeons</button>";
+            } else {
+                dungeon = "";
+            }
+            document.getElementById('story').innerHTML = data.name + gameEvents.stories.hub;
+            document.getElementById('input').innerHTML = gameEvents.input.hub + forest + cave + dungeon;
+        }
+
+        function dungeonCheck() {
+            var cave = document.getElementById('caveDFound').value;
+            if (cave == "true") {
+                cave = "cave:true";
+            } else {
+                cave = "cave:false";
+            }
+            if (cave == "cave:true") {
+                return ("dungeons:true," + cave);
+            } else {
+                return ("dungeons:false");
+            }
+        }
+
+        function forestFind() {
+            main();
+            document.getElementById('forestFound').value = "true";
+        }
+
+        function flee(speed) {
+            if (data.dex > speed) {
+                main();
+            } else {
+                hp(1, 's');
+            }
+        }
+
+        function hp(hpFact, as) {
+            if (as == "a") {
+                var newHP = Number(document.getElementById('hpBar').innerHTML) + hpFact;
+                if (newHP >= 100) {
+                    newHP = 100;
+                }
+                data.curHp = newHP;
+            }
+            if (as == "s") {
+                var hpMod = Math.round(data.con * .12);
+                var newHP = Number(document.getElementById('hpBar').innerHTML) - hpFact + hpMod;
+                data.curHp = newHP;
+            }
+            if (as == "set") {
+                data.curHp = hpFact;
+            }
+            if (data.curHp <= 0) {
+                death();
+            }
+        }
+
+        function wolfFight(wolfHP, wolfStr) {
+            var playerStr = document.getElementById('str');
+            document.getElementById('input').innerHTML = gameEvents.input.wolfInput;
+            document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
+    100\
+  </div>';
+        }
+
+        function wolfDefeat() {
+            main();
+            xp(5);
+            if (document.getElementById('silly mode').value == "true") {
+                itemGet("Cuban Cheese", 2);
+            }
+        }
+
+        function fight(name, fightHP, victory, fightStr) {
+            var weapon = data.gear.weapon.name;
+            var weaponStr = data.gear.weapon.damage;
+            var weaponClass = data.gear.weapon.class;
+            var playerStr = Math.round(data.str / fightHP * 10) + weaponStr;
+            var fightstory = "test";
+            if (weaponClass == "fist") {
+                fightstory = "You use your fists to attack the " + name + ". (" + String(playerStr) + ")";
+            }
+            if (weaponClass == "melee") {
+                fightstory = "You run up to attack the " + name + " with your " + weapon + ". (" + String(playerStr) + ")";
+            }
+            if (weaponClass == "heavy") {
+                fightstory = "You swing down your " + weapon + " to wound the " + name + ". (" + String(playerStr) + ")";
+            }
+            if (weaponClass == "ranged") {
+                fightstory = "You shoot the " + name + " with your " + weapon + ". (" + String(playerStr) + ")";
+            }
+            fightstory += "<br /> The " + name + " attacks! (" + fightStr + ") But your dexterity lessens the blow.";
+            story = fightstory;
+            var currentEnemyHP = document.getElementById('enemyHPBar').innerHTML;
+            var newEnemyHP = currentEnemyHP - playerStr;
+            document.getElementById('enemyHPBar').innerHTML = newEnemyHP;
+            document.getElementById('enemyHPBar').style.width = newEnemyHP + "%";
+            fightStr = fightStr - data.dex;
+            hp(fightStr, "s");
+            if (newEnemyHP <= 0) {
+                Defeat(victory);
+            }
+        }
+
+        function Defeat(opponent) {
+            if (opponent == "wolf") {
+                wolfDefeat();
+            }
+            if (opponent == "orc") {
+                orcDefeat();
+            }
+            if (opponent == "ogre") {
+                ogreDefeat();
+            }
+        }
+
+        function ogreDefeat() {
+            itemGet("Health Potion", 5)
+            main();
+        }
+
+        function xp(points) {
+            var currentXP = Number(document.getElementById('xpPoints').innerHTML);
+            var level = Number(document.getElementById('xpTotal').innerHTML);
+            var newXP = currentXP + points;
+            var percent = newXP / level * 100;
+
+            if (percent >= 100) {
+                if (document.getElementById('lv1').className == "disabled") {
+                    document.getElementById('lv1').className = "active";
+                    levelUp(1);
+                } else if (document.getElementById('lv2').className == "disabled") {
+                    document.getElementById('lv2').className = "active";
+                    levelUp(2);
+                } else if (document.getElementById('lv3').className == "disabled") {
+                    document.getElementById('lv3').className = "active";
+                    levelUp(3);
+                } else if (document.getElementById('lv4').className == "disabled") {
+                    document.getElementById('lv4').className = "active";
+                    levelUp(4);
+                } else if (document.getElementById('lv5').className == "disabled") {
+                    document.getElementById('lv5').className = "active";
+                    levelUp(5);
+                }
+                percent = 0;
+                newXP = 0;
+                var newXPTotal = data.con / 5;
+                document.getElementById('xpTotal').innerHTML = level + newXPTotal;
+            }
+            document.getElementById('xpPoints').innerHTML = newXP;
+            document.getElementById('xpBar').style.width = percent + "%";
+        }
+
+        function levelUp(level) {
+            document.getElementById('level').value = level;
+        }
+
+        function save(to) {
+            if (to == "server") {
+                document.getElementById('dat').value = document.getElementById('saveFile').innerHTML;
+                document.getElementById('usr').value = document.getElementById("name").value;
+                document.forms["saveForm"].submit();
+            }
+            if (to == "one") {
+                localStorage.setItem('delpinoSave1', JSON.stringify(data));
+            }
+            if (to == "two") {
+                localStorage.setItem('delpinoSave2', JSON.stringify(data));
+            }
+            if (to == "three") {
+                localStorage.setItem('delpinoSave3', JSON.stringify(data));
+            }
+        }
+
+        function load(from) {
+            main();
+            var stored;
+            if (from == "one") {
+                stored = JSON.parse(localStorage.getItem('delpinoSave1'));
+            }
+            if (from == "two") {
+                stored = JSON.parse(localStorage.getItem('delpinoSave2'));
+            }
+            if (from == "three") {
+                stored = JSON.parse(localStorage.getItem('delpinoSave3'));
+            }
+            var obj3 = data;
+            for (var attrname in stored) {
+                obj3[attrname] = stored[attrname];
+            }
+            data = obj3;
+            main();
+        }
+
+        function levelUp(level) {
+            document.getElementById('level').value = level;
+        }
+
+        function inventory() {
+            if (data.bag[1].value == "n") {
+                var inventory1 = "<button class='btn btn-warning'>None</button>";
+            } else {
+                var inventory1 = "<button onclick='useItem(\"1\")' class='btn btn-warning'>" + data.bag[1].value + " <span class='badge'>" + data.bag[1].name + "</span></button>";
+            }
+            if (document.getElementById('inventory2').value == "n") {
+                var inventory2 = "<button class='btn btn-warning'>None</button>";
+            } else {
+                var inventory2 = "<button onclick='useItem(\"2\")' class='btn btn-warning'>" + document.getElementById('inventory2').value + " <span class='badge'>" + document.getElementById('inventory2').name + "</span></button>";
+            }
+            if (document.getElementById('inventory3').value == "n") {
+                var inventory3 = "<button class='btn btn-warning'>None</button>";
+            } else {
+                var inventory3 = "<button onclick='useItem(\"3\")' class='btn btn-warning'>" + document.getElementById('inventory3').value + " <span class='badge'>" + document.getElementById('inventory3').name + "</span></button>";
+            }
+            if (document.getElementById('inventory4').value == "n") {
+                var inventory4 = "<button class='btn btn-warning'>None</button>";
+            } else {
+                var inventory4 = "<button onclick='useItem(\"4\")' class='btn btn-warning'>" + document.getElementById('inventory4').value + " <span class='badge'>" + document.getElementById('inventory4').name + "</span></button>";
+            }
+            if (document.getElementById('inventory5').value == "n") {
+                var inventory5 = "<button class='btn btn-warning'>None</button>";
+            } else {
+                var inventory5 = "<button onclick='useItem(\"5\")' class='btn btn-warning'>" + document.getElementById('inventory5').value + " <span class='badge'>" + document.getElementById('inventory5').name + "</span></button>";
+            }
+
+            if (document.getElementById('inventory6').value == "n") {
+                var inventory6 = "<button class='btn btn-warning'>None</button>";
+            } else {
+                var inventory6 = "<button onclick='useItem(\"6\")' class='btn btn-warning'>" + document.getElementById('inventory6').value + " <span class='badge'>" + document.getElementById('inventory6').name + "</span></button>";
+            }
+            document.getElementById('story').innerHTML = inventory1 + " " + inventory2 + " " + inventory3 + " " + inventory4 + " " + inventory5 + " " + inventory6;
+        }
+
+        function itemGet(item, quantity) {
+            var done = 0;
+            var i = 0;
+            for (var slot in data.bag) {
+                if (done != 1) {
+                    console.log(item + "\n" + quantity + "\n" + slot);
+                    if (data.bag[slot].name == item) {
+                        data.bag[slot].q += quantity;
+                        console.log("Add");
+                        done = 1;
+                    } else if (data.bag[slot].name == "") {
+                        data.bag[slot].name = item;
+                        data.bag[slot].q = quantity;
+                        console.log("New");
+                        done = 1;
+                    } else {
+                        console.log("Nope");
+                        done = 0;
+                    }
+                }
+            };
+        }
+
+        function useItem(slot) {
+            var iSlot = "inventory" + slot;
+            var item = document.getElementById(iSlot).value;
+
+            var newQuantity = Number(document.getElementById(iSlot).name) - 1;
+            document.getElementById(iSlot).name = newQuantity;
+
+            if (document.getElementById(iSlot).role == "weapon") {
+                document.getElementById(iSlot).name = 0;
+                var name = document.getElementById(iSlot).value;
+                var str = document.getElementById(iSlot).name;
+                var className = document.getElementById(iSlot).className;
+                document.getElementById(iSlot).role = "item";
+                weaponEquip(name, str, className);
+            } else {
+                itemEffect(item);
+            }
+            if (document.getElementById(iSlot).name == "0" || document.getElementById(iSlot).role == "weapon") {
+                document.getElementById(iSlot).value = "n";
+                document.getElementById(iSlot).className = "";
+                inventory();
+            }
+        }
+
+        function weaponEquip(name, str, className) {
+            document.getElementById('weapon').value = name;
+            document.getElementById('weapon').name = str;
+            document.getElementById('weapon').className = className;
+        }
+
+        function itemEffect(item) {
+            if (item == "Health Potion") {
+                hp(20, "a");
+            }
+            if (item == "Cuban Cheese") {
+                data.dex--;
+                data.str++;
+            }
+            inventory();
+        }
+
+        function forest() {
+            var forestExplore = Math.floor((Math.random() * 10) + 1);
+            if (forestExplore <= 4) {
+                document.getElementById('story').innerHTML = gameEvents.stories.forest;
+                document.getElementById('input').innerHTML = gameEvents.input.explore1;
+            } else if (forestExplore > 9) {
+                var ihtemm;
+                if (document.getElementById('silly mode').value == "true") {
+                    itemGet("Cuban Cheese", 5);
+                    ihtemm = "piece of Cuban Cheese.";
+                } else {
+                    itemGet('Health Potion', 2);
+                    ihtemm = "Health Potion.";
+                }
+                document.getElementById('story').innerHTML = gameEvents.stories.forest + "<br>You also got a " + ihtemm;
+                document.getElementById('input').innerHTML = gameEvents.input.explore1;
+            } else if (forestExplore > 4 && forestExplore < 10) {
+                if (document.getElementById('caveFound').value == "false") {
+                    document.getElementById('story').innerHTML = "You stumble through the forest and discover a cave!";
+                    document.getElementById('input').innerHTML = gameEvents.input.explore1;
+                    caveFound();
+                } else {
+                    orcFight();
+                }
+            }
+        }
+
+        function caveFound() {
+            document.getElementById('caveFound').value = "true";
+        }
+
+        function cave() {
+            var caveExplore = Math.random();
+            if (caveExplore <= .25) {
+                document.getElementById('story').innerHTML = "cave story 1!";
+                document.getElementById('input').innerHTML = gameEvents.input.explore1;
+            }
+            if (caveExplore > .25 && caveExplore <= .5) {
+                document.getElementById('story').innerHTML = "cave story 2!";
+                document.getElementById('input').innerHTML = gameEvents.input.explore1;
+            }
+            if (caveExplore > .5 && caveExplore <= .75) {
+                if (document.getElementById('weapon').value == "Beautiful Short Sword") {
+                    document.getElementById('story').innerHTML = "cave story 3";
+                } else {
+                    document.getElementById('story').innerHTML = "You found a beautiful Short Sword!";
+                    weaponGet("Beautiful Short Sword", 4, "melee");
+                }
+                document.getElementById('input').innerHTML = gameEvents.input.explore1;
+            }
+            if (caveExplore > .75 && caveExplore <= 1) {
+                dungeonFind('cave');
+                document.getElementById('story').innerHTML = "Welcome to the dungeon 1";
+                document.getElementById('input').innerHTML = "<button class='btn btn-primary' onclick='caveDungeon(\"1\")'>Enter</button> | <button onclick='main()' class='btn btn-default'>Leave</button>";
+            }
+        }
+
+        function orcFight() {
+            document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
+    100\
+  </div>';
+            document.getElementById('story').innerHTML = "An orc blocks your path!";
+            document.getElementById('input').innerHTML = "<button onclick='fight(\"Orc\", 90, \"orc\", 18)' class='btn btn-danger'>Fight!</button>";
+        }
+
+        function orcDefeat() {
+            xp(25);
+            itemGet("Cuban Cheese", 1);
+            main();
+        }
+
+        function death() {
+            $('#deathModal').modal();
+            main();
+            hp(100, "set");
+        }
+
+        function autoSave(on) {
+            var i = 1;
+            if (on == true) {
+                i = 10;
+            }
+            while (i > 3) {
+                if (document.getElementById('file').value == 1) {
+                    save(1);
+                }
+                if (document.getElementById('file').value == 2) {
+                    save(2);
+                }
+                if (document.getElementById('file').value == 3) {
+                    save(3);
+                }
+                i++;
+            }
+        }
+
+        function weaponGet(item, str, className) {
+            var inventory1i = data.bag[1].value;
+            var inventory1q = data.bag[1].name;
+            var inventory2i = document.getElementById('inventory2').value;
+            var inventory2q = document.getElementById('inventory2').name;
+            var inventory3i = document.getElementById('inventory3').value;
+            var inventory3q = document.getElementById('inventory3').name;
+            var inventory4i = document.getElementById('inventory4').value;
+            var inventory4q = document.getElementById('inventory4').name;
+            if (inventory1i == "n") {
+                data.bag[1].value = item;
+                data.bag[1].name = str;
+                data.bag[1].className = className;
+                data.bag[1].role = "weapon";
+            } else if (inventory2i == "n") {
+                document.getElementById('inventory2').value = item;
+                document.getElementById('inventory2').name = str;
+                document.getElementById('inventory2').className = className;
+                document.getElementById('inventory2').role = "weapon";
+            } else if (inventory3i == "n") {
+                document.getElementById('inventory3').value = item;
+                document.getElementById('inventory3').name = str;
+                document.getElementById('inventory3').className = className;
+                document.getElementById('inventory3').role = "weapon";
+            } else if (inventory4i == "n") {
+                document.getElementById('inventory4').value = item;
+                document.getElementById('inventory4').name = str;
+                document.getElementById('inventory4').className = className;
+                document.getElementById('inventory4').role = "weapon";
+            }
+        }
+
+        function dungeonFind(dungeon) {
+            document.getElementById(dungeon + "DFound").value = "true";
+        }
+
+        function caveDungeon(room) {
+            if (room == 1) {
+                document.getElementById('input').innerHTML = "<button id='north' onclick='caveDungeon(\"2\")' type='button' class='btn btn-default direction'>North</button><br /><button id='west' onclick='caveDungeon(\"4\")' type='button' class='btn btn-default direction'>West</button><button id='south' onclick='caveDungeon(\"3\")' type='button' class='btn btn-default direction'>South</button><button id='east' onclick='main()' type='button' class='btn btn-warning direction'>Back <i class='fa fa-arrow-circle-o-down'></button>";
+                document.getElementById('story').innerHTML = "You make your way into the (hopefully) abandoned lair.";
+            }
+            if (room == 2) {
+                document.getElementById('input').innerHTML = "<button id='west' onclick='nextroomcave(\"5\")' type='button' class='btn btn-default direction'>West</button><button id='south' onclick='nextroomcave(\"1\")' type='button' class='btn btn-default direction'>South</button>";
+                document.getElementById('story').innerHTML = "You venture North through the dungeon.<br /> There is a treasure chest in the corner of this room";
+            }
+            if (room == 3) {
+                document.getElementById('input').innerHTML = "<button id='north' onclick='caveDungeon(\"1\")' type='button' class='btn btn-default direction'>North</button><br /><button id='west' onclick='caveDungeon(\"6\")' type='button' class='btn btn-default direction'>West</button><button id='east' onclick='caveDungeon(\"7\")' type='button' class='btn btn-default direction'>East</button>";
+                document.getElementById('story').innerHTML = "As you make your way into the room, you smell something gross. You think that there is an ogre nearby.";
+            }
+            if (room == 7) {
+                document.getElementById('input').innerHTML = "<button class='btn-btn-danger' onclick='fight(\"ogre\", 55, \"ogre\", 32);' type='button'>Attack</button>|<button class='btn btn-warning' onclick='flee(15)'>Flee</button>";
+                document.getElementById('story').innerHTML = "Your nose was right! You have to fight an ogre!";
+                document.getElementById("enemyHP").innerHTML = '<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;" id="enemyHPBar">\
+    100\
+  </div>';
+            }
+        }
+
+        function nextroomcave(room) {
+            caveDungeon(room);
+        }
+
+        function gtDungeon() {
+            if (dungeonCheck() == "dungeons:true,cave:true") {
+                document.getElementById('input').innerHTML = "<button type='button' onclick='caveDungeon(\"1\")' class='btn btn-success'>Cave</button>";
+            }
+        }
+    </script>
+</body>
+
 </html>

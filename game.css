@@ -3,6 +3,7 @@ div#story{
  width: 50vw;
  left: 25vw;
  height: 75vh;
+    overflow: scroll;
 }
 #stats{
  position: fixed;
@@ -36,4 +37,7 @@ p:first-letter{
     align-content: center;
     align-items: center;
     text-align-last: center;
+}
+#name{
+    text-align: right;
 }
