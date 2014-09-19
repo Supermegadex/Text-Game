@@ -6,19 +6,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono|Ubuntu|Ubuntu+Condensed' rel='stylesheet' type='text/css'>
-    <script src="taffy.js"></script>
     <script src="angular.min.js"></script>
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
     <script src="jquery.min.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>
     <link href="game.css" rel="stylesheet" />
-    <script src="foundation/js/vendor/modernizr.js"></script>
     <script>
         var gameEvents = new Object();
         gameEvents = {
             stories: {
-                hub: ", you are at camp",
+                campDescript: function () {
+                    if (data.campSize = 1) {
+                        return ("personal tent");
+                    }
+                    if (data.campSize = 2) {
+                        return ("small camp");
+                    }
+                    if (data.campSize = 3) {
+                        return ("large camp");
+                    }
+                    if (data.campSize = 4) {
+                        return ("village");
+                    }
+                    if (data.campSize = 5) {
+                        return ("town");
+                    }
+                },
+                hub: function () {
+                    return ("You return to your " + this.campDescript);
+                },
                 explore1: "You walk around.",
                 explore2: "You find a forest.",
                 explore3: "You encounter a wolf.",
@@ -271,6 +288,7 @@
             cha: 10,
             curHp: 100,
             maxHp: 100,
+            campSize: 1,
             gear: {
                 weapon: {
                     name: "fist",
