@@ -391,7 +391,8 @@
 
         });
 
-        var input = document.getElementById('input');
+        var story = document.querySelector('#story');
+        var input = document.querySelector('#input');
 
         function checkKey(from) {
             if (from == "newC") {
@@ -454,8 +455,8 @@
             }
             if (adventure >= 7) {
                 if (data.places.forest = false) {
-                    document.getElementById('story').innerHTML = gameEvents.stories.explore2;
-                    document.getElementById('input').innerHTML = gameEvents.input.explore2;
+                    story.innerHTML = gameEvents.stories.explore2;
+                    input.innerHTML = gameEvents.input.explore2;
                 } else {
                     document.getElementById('story').innerHTML = gameEvents.stories.explore3;
                     document.getElementById('input').innerHTML = gameEvents.input.explore3;
@@ -569,8 +570,8 @@
             if (weaponClass == "ranged") {
                 fightstory = "You shoot the " + name + " with your " + weapon + ". (" + String(playerStr) + ")";
             }
-            fightstory += "<br /> The " + name + " attacks! (" + fightStr + ") But your dexterity lessens the blow.";
-            story = fightstory;
+            fightstory += "<br /> The " + name + " attacks! (" + fightStr + ")";
+            story.innerHTML = fightstory;
             var currentEnemyHP = document.getElementById('enemyHPBar').innerHTML;
             var newEnemyHP = currentEnemyHP - playerStr;
             document.getElementById('enemyHPBar').innerHTML = newEnemyHP;
