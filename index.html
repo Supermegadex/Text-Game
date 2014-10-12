@@ -53,7 +53,7 @@
                     if (data.places.cave) {
                         output += gameEvents.input.cave;
                     }
-                    if (dungeonCheck() == "dungeons:true") {
+                    if (data.places.dungeons.cave) {
                         output += "<button onclick='gtDungeon()' class='btn btn-danger' type='button'>Dungeons</button>";
                     }
                     output += "<button onclick='inventory()' class='btn btn-primary' style='float: right'>Inventory</button><button onclick='store(\"Health Potion\", \"Potion of Quickness\", \"Cuban Cheese\", \"\", \"choose\", 0)' class='btn btn-success' style='float: right'>General Goods Store</button>";
@@ -801,7 +801,7 @@
                 document.getElementById('input').innerHTML = gameEvents.input.explore1;
             }
             if (caveExplore > .75 && caveExplore <= 1) {
-                dungeonFind('cave');
+                data.places.dungeons.cave = true;
                 document.getElementById('story').innerHTML = "Welcome to the dungeon 1";
                 document.getElementById('input').innerHTML = "<button class='btn btn-primary' onclick='caveDungeon(\"1\")'>Enter</button> | <button onclick='main()' class='btn btn-default'>Leave</button>";
             }
@@ -886,8 +886,9 @@
         }
 
         function gtDungeon() {
-            if (dungeonCheck() == "dungeons:true,cave:true") {
-                document.getElementById('input').innerHTML = "<button type='button' onclick='caveDungeon(\"1\")' class='btn btn-success'>Cave</button>";
+            document.getElementById('input').innerHTML = "";
+            if (data.places.dungeons.cave) {
+                document.getElementById('input').innerHTML += "<button type='button' onclick='caveDungeon(\"1\")' class='btn btn-success'>Cave</button>";
             }
         }
 
