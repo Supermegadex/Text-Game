@@ -20,19 +20,19 @@
             },
             stories: {
                 campDescript: function () {
-                    if (data.campSize = 1) {
+                    if (data.campSize == 1) {
                         return ("personal tent");
                     }
-                    if (data.campSize = 2) {
+                    if (data.campSize == 2) {
                         return ("small camp");
                     }
-                    if (data.campSize = 3) {
+                    if (data.campSize == 3) {
                         return ("large camp");
                     }
-                    if (data.campSize = 4) {
+                    if (data.campSize == 4) {
                         return ("village");
                     }
-                    if (data.campSize = 5) {
+                    if (data.campSize == 5) {
                         return ("town");
                     }
                 },
@@ -47,10 +47,10 @@
             input: {
                 hub: function () {
                     var output = "<button onclick='explore()' class='btn btn-info'>Explore<i class='fa fa-arrow-o-right'></i></button>";
-                    if (data.places.forest = true) {
+                    if (data.places.forest) {
                         output += gameEvents.input.forest;
                     }
-                    if (data.places.cave = true) {
+                    if (data.places.cave) {
                         output += gameEvents.input.cave;
                     }
                     if (dungeonCheck() == "dungeons:true") {
@@ -61,7 +61,7 @@
                 },
                 explore1: "<button type='button' class='btn btn-succeed' onclick='main()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
                 explore2: "<button type='button' class='btn btn-succeed' onclick='forestFind()'>Next <i class='fa fa-arrow-circle-o-right'></i>",
-                explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> or <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button>",
+                explore3: "<button type='button' class='btn btn-danger' onclick='wolfFight()' id='wolfFightBtn'>Fight!</button> | <button type='button' class='btn btn-warning' onclick='flee(7)'>Try to Flee</button> | <button onclick='tame(\"Wolf\")' class='btn btn-warning'>Tame</button>",
                 wolfInput: "<button onclick='fight(\"Wolf\", 20, \"wolf\", 15)' class='btn btn-danger'>Fight</button> or <button onclick='flee(8)' class='btn btn-warning'>Run</button>",
                 forest: "<button onclick='forest()' class='btn btn-success'>Forest</button>",
                 cave: "<button onclick='cave()' class='btn btn-primary'>Cave</button>",
@@ -294,7 +294,7 @@
 
     <script>
         var data = {
-            name: "ABC123!@#$%^&*()'",
+            name: "",
             personality: 0,
             str: 10,
             int: 10,
@@ -305,6 +305,7 @@
             curHp: 100,
             maxHp: 100,
             campSize: 1,
+            gold: 0,
             gear: {
                 weapon: {
                     name: "fist",
@@ -370,6 +371,7 @@
                     cave: false,
                 },
             },
+            pets: {},
         };
 
         Object.observe(data, function (changes) {
@@ -385,6 +387,7 @@
                 document.getElementById('cha').innerHTML = data.cha;
                 document.getElementById('hpBar').innerHTML = data.curHp;
                 document.getElementById('hpBar').style.width = ((data.curHp / data.maxHp) * 100) + "%";
+                document.getElementById('gold').innerHTML = data.gold;
 
                 console.log(change.type, change.name, change.oldValue);
             });
@@ -454,7 +457,7 @@
                 itemGet("Health Potion", 1);
             }
             if (adventure >= 7) {
-                if (data.places.forest = false) {
+                if (data.places.forest == false) {
                     story.innerHTML = gameEvents.stories.explore2;
                     input.innerHTML = gameEvents.input.explore2;
                 } else {
@@ -490,7 +493,7 @@
 
         function dungeonCheck() {
             var cave;
-            if (data.places.cave = true) {
+            if (data.places.cave) {
                 cave = "cave:true";
             } else {
                 cave = "cave:false";
@@ -558,7 +561,7 @@
             var weaponClass = data.gear.weapon.class;
             var playerStr = Math.round(data.str / fightHP * 10) + weaponStr;
             var fightstory = "test";
-            if (weaponClass == "fist") {
+            if (data.gear.weapon.name == "fist") {
                 fightstory = "You use your fists to attack the " + name + ". (" + String(playerStr) + ")";
             }
             if (weaponClass == "melee") {
@@ -768,12 +771,12 @@
                 document.getElementById('story').innerHTML = "You wander around the forest and find " + ihtemm;
                 document.getElementById('input').innerHTML = gameEvents.input.explore1;
             } else if (forestExplore > 4 && forestExplore < 10) {
-                if (data.places.cave = false) {
+                if (data.places.cave) {
+                    orcFight();
+                } else {
                     document.getElementById('story').innerHTML = "You stumble through the forest and discover a cave!";
                     document.getElementById('input').innerHTML = gameEvents.input.explore1;
                     data.places.cave = true;
-                } else {
-                    orcFight();
                 }
             }
         }
@@ -885,6 +888,86 @@
         function gtDungeon() {
             if (dungeonCheck() == "dungeons:true,cave:true") {
                 document.getElementById('input').innerHTML = "<button type='button' onclick='caveDungeon(\"1\")' class='btn btn-success'>Cave</button>";
+            }
+        }
+
+        function store(one, two, three, four, item, times) {
+            var price;
+            var btns;
+            var storeItems = {
+                "Health Potion": 12,
+                "Sword": 52,
+                "Wisdom Potion": 20,
+                "Battleaxe": 64,
+                "Cuban Cheese": 254,
+                "Potion of Quickness": 18,
+            };
+            if (one != "") {
+                btns = "<button type='button' onclick='store(\"" + one + "\", \"" + two + "\", \"" + three + "\", \"" + four + "\", 1, 0)' class='btn btn-warning store'>" + one + "<span class='label label-warning'>" + storeItems[one] + "</span></button> ";
+            } else {
+                btns = "";
+            }
+            if (two != "") {
+                btns += "<button type='button' onclick='store(\"" + one + "\", \"" + two + "\", \"" + three + "\", \"" + four + "\", 2, 0)' class='btn btn-warning store'>" + two + "<span class='label label-warning'>" + storeItems[two] + "</span></button> ";
+            }
+            if (three != "") {
+                btns += "<button type='button' onclick='store(\"" + one + "\", \"" + two + "\", \"" + three + "\", \"" + four + "\", 3, 0)' class='btn btn-warning store'>" + three + "<span class='label label-warning'>" + storeItems[three] + "</span></button> ";
+            }
+            if (four != "") {
+                btns += "<button type='button' onclick='store(\"" + one + "\", \"" + two + "\", \"" + three + "\", \"" + four + "\", 4, 0)' class='btn btn-warning store'>" + four + "<span class='label label-warning'>" + storeItems[four] + "</span></button>";
+            }
+            document.getElementById('story').innerHTML = btns;
+            if (item == "1") {
+                price = storeItems[one];
+                if (data.gold >= price) {
+                    data.gold -= price;
+                    itemGet(one, 1);
+                } else {
+                    alert("You don't have enough gold");
+                }
+            }
+            if (item == "2") {
+                price = storeItems[two];
+                if (data.gold >= price) {
+                    data.gold -= price;
+                    itemGet(two, 1);
+                } else {
+                    alert("You don't have enough gold");
+                }
+            }
+            if (item == "3") {
+                price = storeItems[three];
+                if (data.gold >= price) {
+                    data.gold -= price;
+                    itemGet(three, 1);
+                } else {
+                    alert("You don't have enough gold");
+                }
+            }
+            if (item == "4") {
+                price = storeItems[four];
+                if (data.gold >= price) {
+                    data.gold -= price;
+                    itemGet(four, 1);
+                } else {
+                    alert("You don't have enough gold");
+                }
+            }
+            if (times != "1") {
+                store(one, two, three, four, "choose", "1");
+            }
+        }
+
+        function tame(char) {
+            var petChar = {
+                "Wolf": 16,
+            };
+            if (document.getElementById('cha').innerHTML >= petChar[char]) {
+                if (data.pets[char] != null && data.pets[char] != "undefined") {
+                    data.pets[char]++;
+                } else {
+                    data.pets[char] = 1;
+                }
             }
         }
     </script>
